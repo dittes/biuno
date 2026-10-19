@@ -46,7 +46,9 @@ demonstration on resume. Scores are separate by game and difficulty.
 - `src/art.mjs`: original SVG symbols and board previews.
 - `src/storage.mjs`: versioned local state and records.
 - `src/app.mjs`: language navigation, filtering, daily links, progress management.
-- `tokens.css`, `styles.css`: local system fonts, royal blue/grey design, responsive styles.
+- `tokens.css`, `styles.css`, `redesign.css`: local system fonts, royal blue/grey
+  design and responsive styles. The final presentation layer is `redesign.css`.
+- `design.md`: shared game-first design system for all locale pages.
 - `scripts/build.mjs`: generates 40 localized pages, metadata and service worker.
 - `dist/`: self-contained static hosting output.
 
@@ -72,7 +74,8 @@ records. No data is sent to a Biuno game backend.
 
 A versioned service worker pre-caches all locale pages and game assets after a
 successful visit. Offline use requires successful installation. Content changes
-change the cache hash; a waiting worker activates once old tabs close. The hosting
+change the cache hash; a fully cached update activates immediately and active
+clients reload once to receive the new presentation, preserving saved rounds. The hosting
 provider may have separate access authentication and connection logs, explained
 on the localized privacy pages. A protected preview may need sign-in initially.
 
@@ -116,3 +119,18 @@ Safari/Firefox need separate testing; desktop Chromium emulation is not equivale
 
 The imprint uses the operator name, address and email supplied by the owner. Other
 business details should only be added if they apply and are confirmed by the owner.
+
+## Game-first redesign
+
+Game pages now use a compact wordmark/game/language navigation bar, a title and
+subtitle, and one large central play surface. Instructions and personal best sit
+below the board. Start screens show an inert board preview instead of repeating
+the full instructions. On results, Play again is on the right, with Share with
+friends and Play another game as secondary actions. Random selection excludes
+the current game and retains the current language. Share opens the native share
+sheet when available, falls back to copying the game URL, and finally offers a
+selectable URL in a native dialog. No sharing happens without pressing the button.
+
+`npm run test:redesign` (with the same Playwright environment as above) checks
+these controls in all four languages, fresh replay seeds, preserved best scores,
+native sharing, clipboard and dialog fallbacks, share cancellation and navigation.

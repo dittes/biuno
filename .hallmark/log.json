@@ -1,1 +1,23 @@
-[{"date":"2026-10-19","macrostructure":"Ecosystem Index","theme":"custom","theme_axes":"light / roman-serif / cool","nav":"N6","footer":"Ft2","enrichment":"original game-board previews","brief":"Biuno: quiet editorial browser games in four languages, royal blue and grey, local fonts"}]
+[
+  {
+    "date": "2026-10-19",
+    "scope": "app",
+    "macrostructure": "Workbench",
+    "theme": "custom",
+    "theme_axes": "light / system-sans / cool",
+    "nav": "N9",
+    "footer": "Ft2",
+    "enrichment": "none",
+    "brief": "Game-first redesign: small navigation, large play surface, replay/share/random actions; user-selected system fonts"
+  },
+  {
+    "date": "2026-10-19",
+    "macrostructure": "Ecosystem Index",
+    "theme": "custom",
+    "theme_axes": "light / roman-serif / cool",
+    "nav": "N6",
+    "footer": "Ft2",
+    "enrichment": "original game-board previews",
+    "brief": "Biuno: quiet editorial browser games in four languages, royal blue and grey, local fonts"
+  }
+]

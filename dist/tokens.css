@@ -1,11 +1,11 @@
 /* Hallmark · pre-emit critique: P5 H4 E4 S5 R5 V4
- * genre: editorial · macrostructure: Ecosystem Index · theme: custom
- * tone: quiet editorial · anchor hue: royal blue · nav: N6 · footer: Ft2
+ * genre: modern-minimal · macrostructure: Workbench · theme: custom
+ * tone: quiet and functional · anchor hue: royal blue · nav: N9 · footer: Ft2
  * audience: adults 40–65 · use: short browser games · fonts: local system only */
 :root {
-  --color-paper: oklch(97% 0.006 265);
-  --color-surface: oklch(99% 0.003 265);
-  --color-paper-2: oklch(93% 0.012 265);
+  --color-paper: oklch(99% 0.003 265);
+  --color-surface: oklch(97% 0.006 265);
+  --color-paper-2: oklch(94% 0.01 265);
   --color-ink: oklch(25% 0.025 265);
   --color-muted: oklch(46% 0.025 265);
   --color-accent: oklch(45% 0.19 265);
@@ -18,7 +18,8 @@
   --color-error: oklch(42% 0.14 25);
   --color-error-soft: oklch(95% 0.025 25);
   --color-transparent: transparent;
-  --font-display: Georgia, 'Times New Roman', serif;
+  --color-overlay: oklch(25% 0.025 265 / .35);
+  --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
   --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
   --space-xs: 4px;
   --space-sm: 8px;

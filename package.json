@@ -9,6 +9,7 @@
     "verify": "node scripts/verify.mjs",
     "serve": "python3 -m http.server 4173 --directory dist",
     "test:browser": "node tests/browser.cjs",
-    "test:touch": "node tests/touch.cjs"
+    "test:touch": "node tests/touch.cjs",
+    "test:redesign": "node tests/redesign.cjs"
   }
 }

@@ -2,6 +2,7 @@ import {i18n,ids} from './i18n.mjs';
 import {newGame,shuffle,rng,codeFeedback,rotate,pipeSolved,connectedTiles,finishScore,dailyKey} from './engine.mjs';
 import {load,save,record,canSave} from './storage.mjs';
 import {icon,pipe} from './art.mjs';
+import {notify} from './app.mjs';
 const lang=document.documentElement.lang,t=i18n[lang]||i18n.en,id=document.body.dataset.game,index=ids.indexOf(id);
 const area=document.querySelector('#game-area'),levelSelect=document.querySelector('#difficulty'),best=document.querySelector('#best-score');
 const rawDay=new URLSearchParams(location.search).get('daily'),daily=rawDay===dailyKey(),day=dailyKey();
@@ -12,8 +13,19 @@ const cell=(v,k,extra='',disabled=false)=>`<button type="button" class="cell ${e
 function stopTimers(){epoch++;timers.forEach(clearTimeout);timers=[];playingSequence=false;}
 function later(fn,ms){const token=epoch;timers.push(setTimeout(()=>{if(epoch===token)fn();},ms));}
 function persist(){if(!g||g.status!=='playing')return;const d=load();d.sessions[id]=structuredClone(g);save(d);}
-function updateBest(){const r=load().records[`${id}:${level}`];best.textContent=r?`${r.best.toLocaleString(lang)} ${t.score.toLowerCase()}`:t.none;}
+function updateBest(){const r=load().records[`${id}:${level}`];best.textContent=r?`${r.best.toLocaleString(lang)}`:'—';}
 levelSelect.value=String(level);document.querySelector('#mode-label').textContent=daily?t.dailyMode:t.freeMode;
+document.querySelector('#toolbar-daily').hidden=!daily;
+function readyBoard(){
+ const p=newGame(id,level,'biuno-preview');
+ const picture=v=>`<div class="cell">${icon(v)}</div>`;
+ if(id==='matching-pairs')return `<div class="board">${p.cards.map((v,k)=>`<div class="cell ${[0,5].includes(k)?'':'face-down'}">${[0,5].includes(k)?icon(v):''}</div>`).join('')}</div>`;
+ if(id==='what-changed')return `<div class="board question-board" style="--cols:${level===0?2:3}">${p.trials[0].before.map(picture).join('')}</div>`;
+ if(id==='sequence-memory')return `<div class="board sequence-board">${sym.slice(0,4).map(picture).join('')}</div>`;
+ if(id==='pipes')return `<div class="board pipe-board" style="--cols:${p.n}">${p.tiles.map((v,k)=>`<div class="cell pipe-tile ${k===0?'reached':''}">${pipe(v,k===0)}</div>`).join('')}</div>`;
+ if(id==='mental-math'){const q=p.questions[0];return `<div class="ready-math"><p class="math-equation">${q.a} ${q.op} ${q.b} = ?</p><div class="math-answers">${q.choices.map(v=>`<span>${v}</span>`).join('')}</div></div>`;}
+ return `<div class="ready-code"><div class="code-pegs" style="--length:${p.secret.length}">${p.secret.map(()=>'<span class="code-peg">·</span>').join('')}</div><div class="code-palette">${sym.map(v=>`<span class="code-peg">${icon(v)}</span>`).join('')}</div></div>`;
+}
 function safeSession(s){
  if(!s||s.id!==id||s.status!=='playing'||!Number.isInteger(s.level)||s.level<0||s.level>2||typeof s.seed!=='string'||!Number.isInteger(s.round)||s.round<0||s.round>10||!Number.isFinite(s.correct)||s.correct<0||s.correct>10)return false;
  if(Boolean(s.daily)!==daily||(daily&&s.day!==day))return false;
@@ -37,7 +49,7 @@ function stats(){if(id==='matching-pairs')return `<span>${t.moves}: <strong>${g.
 function render(){
  const focus=document.activeElement?.dataset?.focus;
  levelSelect.disabled=Boolean(g&&g.status==='playing')||daily;updateBest();
- if(!g){area.innerHTML=`<div class="intro-game"><div class="intro-icon" aria-hidden="true">${icon([0,4,8,3,12,1][index])}</div><p>${t.rules[index]}</p><div class="intro-actions">${saved?button(t.resumeSaved,'restore'):''}${button(daily?t.dailyPlay:t.start,'start',saved?'button secondary':'button')}</div></div>`;return;}
+ if(!g){area.innerHTML=`<div class="ready-board" aria-hidden="true">${readyBoard()}</div><div class="ready-actions">${saved?button(t.resumeSaved,'restore','button secondary'):''}${button(daily?t.dailyPlay:t.start,'start')}</div>`;return;}
  if(g.paused){area.innerHTML=`<div class="intro-game"><h2 tabindex="-1">${t.paused}</h2><p>${canSave()?t.pausedText:t.saveUnavailable}</p>${button(t.resume,'resume')}</div>`;area.querySelector('button').focus();return;}
  if(g.status==='finished'){renderResult();return;}
  let body='';
@@ -61,7 +73,19 @@ function render(){
 }
 function renderResult(){let detail='';if(id==='matching-pairs'||id==='pipes')detail=`<span>${t.moves}<strong>${g.moves}</strong></span>`;else if(id==='codebreaker')detail=`<span>${t.guess}<strong>${g.history.length} / 8</strong></span>`;else detail=`<span>${t.correct}<strong>${g.correct} / ${id==='mental-math'?10:5}</strong></span>`;
  const reveal=id==='codebreaker'&&!g.won?`<p>${t.codeLost}</p><div class="code-palette" style="margin:0 auto" aria-label="${t.code}">${g.secret.map(v=>`<span class="code-peg" role="img" aria-label="${t.symbols[sym[v]]}">${icon(sym[v])}</span>`).join('')}</div>`:'';
- area.innerHTML=`<div class="result"><div class="result-mark" aria-hidden="true">${g.won?'✓':'·'}</div><h2 tabindex="-1">${g.won&&(id==='pipes'||id==='codebreaker')?t.solved:t.finish}</h2><div class="result-score">${g.score}</div><span>${t.score}</span><div class="result-details">${detail}<span>${t.difficulty}<strong>${t.levels[g.level]}</strong></span></div>${reveal}<p>${t.takeBreak}</p><div class="action-row">${button(t.again,'start')}<a class="button secondary" href="/${lang}/">${t.games}</a></div><small>${canSave()?t.saved:t.saveUnavailable}</small></div>`;}
+ area.innerHTML=`<div class="result"><div class="result-mark" aria-hidden="true">${g.won?'✓':'·'}</div><h2 tabindex="-1">${g.won&&(id==='pipes'||id==='codebreaker')?t.solved:t.finish}</h2><span class="result-label">${t.roundScore}</span><div class="result-score">${g.score}</div><div class="result-details">${detail}<span>${t.highScore}<strong>${load().records[`${id}:${g.level}`]?.best||0}</strong></span></div>${reveal}</div><div class="result-actions"><div class="result-secondary">${button(t.share,'share','button secondary')}${button(t.randomGame,'random','button secondary')}</div>${button(t.again,'start','button play-again')}</div>${!canSave()?`<p class="save-warning">${t.saveUnavailable}</p>`:''}`;}
+function shareUrl(){const url=new URL(`/${lang}/${id}/`,location.origin);if(daily)url.searchParams.set('daily',g?.day||day);return url.href;}
+async function share(){
+ const url=shareUrl(),data={title:`${t.names[index]} · Biuno`,url};
+ if(navigator.share){try{await navigator.share(data);return;}catch(e){if(e.name==='AbortError')return;}}
+ try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(url);notify(t.copied);return;}}catch{}
+ const dialog=document.createElement('dialog');dialog.className='share-dialog';
+ const title=document.createElement('h2');title.textContent=t.share;
+ const label=document.createElement('label');label.textContent=t.shareHelp;
+ const input=document.createElement('input');input.value=url;input.readOnly=true;label.append(input);
+ const close=document.createElement('button');close.className='button';close.textContent=t.ready;close.onclick=()=>dialog.close();
+ dialog.append(title,label,close);document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove());dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close();});dialog.showModal();input.select();
+}
 function playSequence(){playingSequence=true;const seq=g.sequences[g.round],step=[1000,850,700][g.level];seq.forEach((v,i)=>{later(()=>{const b=area.querySelector(`[data-value="${v}"]`);b?.classList.add('flash');},650+i*step);later(()=>{area.querySelector(`[data-value="${v}"]`)?.classList.remove('flash');},650+i*step+Math.min(500,step-200));});later(()=>{playingSequence=false;g.phase='input';g.input=[];persist();render();area.querySelector('[data-action=pick]')?.focus({preventScroll:true});},650+seq.length*step);}
 function pick(k){
  if(!g||g.paused||g.feedback||g.status!=='playing')return;
@@ -76,6 +100,7 @@ function pick(k){
  persist();render();
 }
 area.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b||b.disabled)return;const a=b.dataset.action,k=Number(b.dataset.value);
+ if(a==='share'){share();return;}if(a==='random'){const others=ids.filter(x=>x!==id);location.href=`/${lang}/${others[Math.floor(Math.random()*others.length)]}/`;return;}
  if(a==='start'||a==='reset'){start();return;}if(a==='restore'){g=structuredClone(saved);level=g.level;levelSelect.value=String(level);g.paused=false;if(id==='matching-pairs'&&g.open.length===2)g.open=[];if(id==='sequence-memory'&&!g.feedback){g.phase='watch';g.input=[];}render();return;}
  if(a==='pause'){pause();return;}if(a==='resume'){resume();return;}if(a==='next'){next();return;}
  if(!g||g.paused||g.status!=='playing')return;

@@ -5,6 +5,7 @@ const lang=document.documentElement.lang,t=i18n[lang]||i18n.en;
 const $=s=>document.querySelector(s);
 const data=load();save(data);
 $('#language')?.addEventListener('change',e=>{location.href=e.target.value;});
+$('#game-nav')?.addEventListener('change',e=>{location.href=e.target.value;});
 let noticeTimer;
 export function notify(message,undo){const n=$('#notice');if(!n)return;n.textContent=message;n.hidden=false;clearTimeout(noticeTimer);if(undo){const b=document.createElement('button');b.className='text-button';b.textContent=t.undo;b.onclick=()=>{undo();n.hidden=true;};n.append(b);}noticeTimer=setTimeout(()=>n.hidden=true,undo?12000:6000);}
 if(!canSave())notify(t.saveUnavailable);
@@ -23,4 +24,4 @@ renderProgress();
 $('#export')?.addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify({...load(),sessions:{}},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=`biuno-progress-${day}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 $('#import')?.addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>500000)throw Error();const incoming=JSON.parse(await file.text());if(!valid(incoming))throw Error();const old=structuredClone(load());save({version:1,settings:{level:incoming.settings.level},records:incoming.records,daily:{},sessions:{}});renderProgress();notify(t.imported,()=>{save(old);renderProgress();});}catch{notify(t.importError);}e.target.value='';});
 $('#clear-data')?.addEventListener('click',()=>{const old=structuredClone(load());save(fresh());renderProgress();notify(t.removed,()=>{save(old);renderProgress();});});
-if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{});});}
+if('serviceWorker'in navigator){let controlled=Boolean(navigator.serviceWorker.controller),refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(controlled&&!refreshing){refreshing=true;location.reload();}controlled=true;});window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{});});}

@@ -76,3 +76,10 @@ export const i18n = {
 };
 export const categories = ['memory','memory','memory','logic','logic','numbers'];
 export const durations = ['1–3','2–3','1–2','3–5','2–4','1–2'];
+const redesignCopy={
+ en:{otherGame:'Choose a game',randomGame:'Play another game',share:'Share with friends',copied:'Link copied. Share it with a friend.',copyLink:'Copy link',shareHelp:'Copy this link to share the game.',homeIntro:'Pick a game and get straight to it.',newBest:'New personal best',highScore:'Personal best',roundScore:'Your score',another:'Another game',recordLabel:'Best'},
+ de:{otherGame:'Spiel wählen',randomGame:'Anderes Spiel',share:'Mit Freunden teilen',copied:'Link kopiert. Teile ihn mit Freunden.',copyLink:'Link kopieren',shareHelp:'Kopiere diesen Link, um das Spiel zu teilen.',homeIntro:'Wähle ein Spiel und leg direkt los.',newBest:'Neuer persönlicher Rekord',highScore:'Persönlicher Rekord',roundScore:'Deine Punkte',another:'Anderes Spiel',recordLabel:'Rekord'},
+ cs:{otherGame:'Vybrat hru',randomGame:'Jiná hra',share:'Sdílet s přáteli',copied:'Odkaz zkopírován. Sdílejte ho s přáteli.',copyLink:'Kopírovat odkaz',shareHelp:'Zkopírujte tento odkaz a sdílejte hru.',homeIntro:'Vyberte si hru a rovnou začněte.',newBest:'Nový osobní rekord',highScore:'Osobní rekord',roundScore:'Vaše skóre',another:'Jiná hra',recordLabel:'Rekord'},
+ pl:{otherGame:'Wybierz grę',randomGame:'Inna gra',share:'Udostępnij znajomym',copied:'Link skopiowany. Udostępnij go znajomym.',copyLink:'Kopiuj link',shareHelp:'Skopiuj ten link, aby udostępnić grę.',homeIntro:'Wybierz grę i od razu zacznij.',newBest:'Nowy rekord osobisty',highScore:'Twój rekord',roundScore:'Twoje punkty',another:'Inna gra',recordLabel:'Rekord'}
+};
+for(const lang of Object.keys(i18n))Object.assign(i18n[lang],redesignCopy[lang]);
