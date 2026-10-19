@@ -1,0 +1,8 @@
+export const KEY='biuno:v1';
+export const fresh=()=>({version:1,settings:{level:1},records:{},daily:{},sessions:{}});
+let available=true, memory=fresh();
+export function load(){try{const v=localStorage.getItem(KEY); if(v){const parsed=JSON.parse(v);if(valid(parsed))memory=parsed;}}catch{available=false;}return memory;}
+export function save(v){memory=v;try{localStorage.setItem(KEY,JSON.stringify(v));available=true;}catch{available=false;}return available;}
+export function canSave(){return available;}
+export function valid(v){if(!v||v.version!==1||!v.settings||!Number.isInteger(v.settings.level)||v.settings.level<0||v.settings.level>2||!v.records||!v.daily||!v.sessions)return false;for(const [k,r]of Object.entries(v.records)){if(!/^(matching-pairs|what-changed|sequence-memory|codebreaker|pipes|mental-math):[0-2]$/.test(k)||!r||![r.best,r.played,r.wins].every(n=>Number.isFinite(n)&&n>=0)||typeof r.last!=='string')return false;}return Object.keys(v.records).length<=18&&typeof v.daily==='object'&&typeof v.sessions==='object';}
+export function record(data,g){const key=`${g.id}:${g.level}`,r=data.records[key]||{best:0,played:0,wins:0,last:''};r.played++;r.wins+=g.won?1:0;r.best=Math.max(r.best,g.score);r.last=new Date().toISOString();data.records[key]=r;if(g.daily){const k=`${g.day}:${g.id}`,prev=data.daily[k];data.daily[k]={score:Math.max(prev?.score||0,g.score),won:Boolean(prev?.won||g.won)};}delete data.sessions[g.id];const cutoff=new Date(Date.now()-90*864e5).toISOString().slice(0,10);for(const k of Object.keys(data.daily))if(k.slice(0,10)<cutoff)delete data.daily[k];save(data);}

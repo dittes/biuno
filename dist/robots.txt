@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://biuno-games.openai176656.chatgpt.site/sitemap.xml
