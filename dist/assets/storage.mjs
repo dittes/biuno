@@ -1,5 +1,5 @@
 export const KEY='biuno:v1';
-export const fresh=()=>({version:1,settings:{level:1},records:{},daily:{},sessions:{}});
+export const fresh=()=>({version:1,settings:{level:0},records:{},daily:{},sessions:{}});
 let available=true, memory=fresh();
 export function load(){try{const v=localStorage.getItem(KEY); if(v){const parsed=JSON.parse(v);if(valid(parsed))memory=parsed;}}catch{available=false;}return memory;}
 export function save(v){memory=v;try{localStorage.setItem(KEY,JSON.stringify(v));available=true;}catch{available=false;}return available;}

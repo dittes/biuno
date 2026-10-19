@@ -83,3 +83,40 @@ const redesignCopy={
  pl:{otherGame:'Wybierz grę',randomGame:'Inna gra',share:'Udostępnij znajomym',copied:'Link skopiowany. Udostępnij go znajomym.',copyLink:'Kopiuj link',shareHelp:'Skopiuj ten link, aby udostępnić grę.',homeIntro:'Wybierz grę i od razu zacznij.',newBest:'Nowy rekord osobisty',highScore:'Twój rekord',roundScore:'Twoje punkty',another:'Inna gra',recordLabel:'Rekord'}
 };
 for(const lang of Object.keys(i18n))Object.assign(i18n[lang],redesignCopy[lang]);
+const clearCopy={
+ en:{studyReady:'Find the new picture',autoNext:'The next challenge starts automatically.',review:'Take your time. Continue when you are ready.',close:'Close',steps:[
+  ['Select a difficulty and press Start round.','Choose any two cards. Matching pictures stay visible.','Find every pair. There is no time limit.'],
+  ['Look carefully at every picture. Take as long as you need.','Press Find the new picture. One picture changes and the cards move.','Select the picture you did not see before. Complete five challenges.'],
+  ['Press Start round and watch the highlighted shapes.','When Your turn appears, select the shapes in the same order.','The next sequence begins after a correct answer. Pause at any time.'],
+  ['Choose a shape for each empty position. Shapes may repeat.','Press Check guess. The feedback tells you how many shapes are in the right place or another place.','Change a position by selecting it, then a shape. Find the code within eight guesses.'],
+  ['Select a pipe to turn it one quarter-turn clockwise.','Connect every opening to a neighbouring pipe. No openings may point outside the board.','Connect all tiles into one network. Use a hint if you get stuck.'],
+  ['Read the calculation and select an answer. There is no time limit.','Correct answers continue automatically. If you make a mistake, you can review the answer first.','Complete ten questions to see your score.']
+ ]},
+ de:{studyReady:'Neues Bild finden',autoNext:'Die nächste Aufgabe startet automatisch.',review:'Lass dir Zeit. Wähle Weiter, wenn du bereit bist.',close:'Schließen',steps:[
+  ['Wähle eine Schwierigkeit und dann Runde starten.','Decke zwei Karten auf. Gleiche Bilder bleiben sichtbar.','Finde alle Paare. Es gibt kein Zeitlimit.'],
+  ['Präge dir alle Bilder ein. Nimm dir so viel Zeit wie nötig.','Wähle Neues Bild finden. Ein Bild wird ersetzt und die Karten werden gemischt.','Wähle das Bild, das vorher nicht dabei war. Löse fünf Aufgaben.'],
+  ['Starte die Runde und beobachte die hervorgehobenen Formen.','Wenn Du bist dran erscheint, wähle die Formen in derselben Reihenfolge.','Nach einer richtigen Antwort startet die nächste Folge. Du kannst jederzeit pausieren.'],
+  ['Wähle für jeden freien Platz eine Form. Formen dürfen mehrfach vorkommen.','Wähle Versuch prüfen. Die Hinweise zeigen, wie viele Formen am richtigen oder an einem anderen Platz stehen.','Zum Ändern wählst du zuerst den Platz und dann die Form. Du hast acht Versuche.'],
+  ['Wähle ein Rohr, um es um eine Vierteldrehung im Uhrzeigersinn zu drehen.','Verbinde jede Öffnung mit einem Nachbarrohr. Keine Öffnung darf aus dem Spielfeld zeigen.','Verbinde alle Felder zu einem Netz. Ein Hinweis hilft dir bei Bedarf.'],
+  ['Lies die Rechnung und wähle ein Ergebnis. Es gibt kein Zeitlimit.','Richtige Antworten führen automatisch weiter. Bei Fehlern kannst du die Lösung zuerst ansehen.','Nach zehn Aufgaben siehst du deine Punkte.']
+ ]},
+ cs:{studyReady:'Hledat nový obrázek',autoNext:'Další úloha začne automaticky.',review:'Nespěchejte. Pokračujte, až budete připraveni.',close:'Zavřít',steps:[
+  ['Vyberte obtížnost a stiskněte Začít kolo.','Otočte dvě kartičky. Stejné obrázky zůstanou odkryté.','Najděte všechny dvojice. Bez časového limitu.'],
+  ['Prohlédněte si všechny obrázky. Máte tolik času, kolik potřebujete.','Stiskněte Hledat nový obrázek. Jeden obrázek se vymění a kartičky se zamíchají.','Vyberte obrázek, který předtím chyběl. Čeká vás pět úloh.'],
+  ['Začněte kolo a sledujte zvýrazněné tvary.','Až budete na řadě, vyberte tvary ve stejném pořadí.','Po správné odpovědi začne další posloupnost. Hru můžete kdykoli pozastavit.'],
+  ['Vyberte tvar pro každou prázdnou pozici. Tvary se mohou opakovat.','Stiskněte Ověřit tip. Nápověda ukazuje počet tvarů na správném a jiném místě.','Pro změnu vyberte pozici a potom tvar. Na odhalení kódu máte osm pokusů.'],
+  ['Klepnutím otočíte potrubí o čtvrt otáčky doprava.','Spojte každý otvor se sousedním potrubím. Žádný nesmí směřovat ven z plochy.','Propojte všechny dílky do jedné sítě. Pokud se zaseknete, použijte nápovědu.'],
+  ['Přečtěte si příklad a vyberte výsledek. Bez časového limitu.','Správné odpovědi pokračují automaticky. Po chybě si nejprve můžete prohlédnout řešení.','Po deseti úlohách uvidíte své skóre.']
+ ]},
+ pl:{studyReady:'Znajdź nowy obrazek',autoNext:'Następne zadanie rozpocznie się automatycznie.',review:'Nie spiesz się. Kontynuuj, gdy będziesz gotowy.',close:'Zamknij',steps:[
+  ['Wybierz poziom trudności i naciśnij Rozpocznij rundę.','Odkryj dwie karty. Takie same obrazki pozostają widoczne.','Znajdź wszystkie pary. Bez limitu czasu.'],
+  ['Przyjrzyj się wszystkim obrazkom. Masz tyle czasu, ile potrzebujesz.','Naciśnij Znajdź nowy obrazek. Jeden obrazek się zmieni, a karty zostaną przetasowane.','Wybierz obrazek, którego wcześniej nie było. Czeka Cię pięć zadań.'],
+  ['Rozpocznij rundę i obserwuj podświetlane kształty.','Gdy nadejdzie Twoja kolej, wybierz kształty w tej samej kolejności.','Po poprawnej odpowiedzi zacznie się kolejna sekwencja. W każdej chwili możesz włączyć pauzę.'],
+  ['Wybierz kształt dla każdej pustej pozycji. Kształty mogą się powtarzać.','Naciśnij Sprawdź próbę. Wskazówki pokazują liczbę kształtów na właściwym i innym miejscu.','Aby zmienić kształt, wybierz pozycję, a potem kształt. Masz osiem prób.'],
+  ['Dotknij rury, aby obrócić ją o ćwierć obrotu w prawo.','Połącz każdy otwór z sąsiednią rurą. Żaden nie może prowadzić poza planszę.','Połącz wszystkie pola w jedną sieć. Jeśli utkniesz, skorzystaj ze wskazówki.'],
+  ['Przeczytaj działanie i wybierz wynik. Bez limitu czasu.','Poprawne odpowiedzi prowadzą dalej automatycznie. Po błędzie możesz najpierw obejrzeć rozwiązanie.','Po dziesięciu zadaniach zobaczysz swój wynik.']
+ ]}
+};
+for(const lang of Object.keys(i18n))Object.assign(i18n[lang],clearCopy[lang]);
+
+for(const lang of Object.keys(i18n))i18n[lang].rules[1]=clearCopy[lang].steps[1].join(' ');

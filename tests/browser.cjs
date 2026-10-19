@@ -40,14 +40,14 @@ const ids=['matching-pairs','what-changed','sequence-memory','codebreaker','pipe
    const s=await state(),pairs=new Map();s.cards.forEach((v,k)=>pairs.set(v,[...(pairs.get(v)||[]),k]));
    for(const [a,b]of pairs.values()){await page.locator(`[data-action=pick][data-value="${a}"]`).click();await page.locator(`[data-action=pick][data-value="${b}"]`).click();}
   }
-  if(id==='what-changed')for(let k=0;k<5;k++){const s=await state(),trial=s.trials[k];await page.locator('[data-action=ready]').click();await page.locator(`[data-action=pick][data-value="${trial.after.indexOf(trial.answer)}"]`).click();await page.locator('[data-action=next]').click();}
+  if(id==='what-changed')for(let k=0;k<5;k++){const s=await state(),trial=s.trials[k];await page.locator('[data-action=ready]').click();await page.locator(`[data-action=pick][data-value="${trial.after.indexOf(trial.answer)}"]`).click();await page.waitForFunction(()=>!document.querySelector('.feedback-box'));}
   if(id==='sequence-memory'){
    await page.clock.install();
    for(let k=0;k<5;k++){
     const s=await state();if(k===0){await page.waitForTimeout(4500);}else await page.clock.runFor(9000);
     await page.waitForFunction(()=>document.querySelector('[data-action=pick]')?.disabled===false);
     for(const v of s.sequences[k])await page.locator(`[data-action=pick][data-value="${v}"]`).click();
-    await page.locator('[data-action=next]').click();
+    await page.clock.runFor(1700);
    }
    await page.clock.resume();
   }
@@ -55,7 +55,7 @@ const ids=['matching-pairs','what-changed','sequence-memory','codebreaker','pipe
   if(id==='pipes'){
    const s=await state();for(let k=0;k<s.tiles.length;k++){let mask=s.tiles[k];while(mask!==s.solution[k]){await page.locator(`[data-action=pick][data-value="${k}"]`).click();mask=((mask<<1)&15)|(mask>>3);}}
   }
-  if(id==='mental-math')for(let k=0;k<10;k++){const s=await state();await page.locator(`[data-action=pick][data-value="${s.questions[k].answer}"]`).click();await page.locator('[data-action=next]').click();}
+  if(id==='mental-math')for(let k=0;k<10;k++){const s=await state();await page.locator(`[data-action=pick][data-value="${s.questions[k].answer}"]`).click();await page.waitForFunction(()=>!document.querySelector('.feedback-box'));}
   await page.locator('.result').waitFor();console.log('Completed via UI:',id);
  }
  const records=await page.evaluate(()=>JSON.parse(localStorage.getItem('biuno:v1')).records);assert.equal(Object.keys(records).length,6);assert.ok(Object.values(records).every(r=>r.played===1&&r.wins===1));

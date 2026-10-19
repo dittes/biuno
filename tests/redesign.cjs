@@ -39,7 +39,7 @@ const languages=['en','de','cs','pl'];
   }
   await page.locator('[data-action=start]').click();const fresh=await page.evaluate(()=>JSON.parse(localStorage.getItem('biuno:v1')).sessions['matching-pairs']);assert.notEqual(fresh.seed,game.seed);assert.equal(await page.locator('#best-score').textContent(),await page.evaluate(l=>(1000).toLocaleString(l),lang));
   await page.selectOption('#game-nav',`/${lang}/mental-math/`);await page.waitForURL(`**/${lang}/mental-math/`);await page.selectOption('#difficulty','0');await page.locator('[data-action=start]').click();
-  for(let k=0;k<10;k++){const s=await page.evaluate(()=>JSON.parse(localStorage.getItem('biuno:v1')).sessions['mental-math']);await page.locator(`[data-action=pick][data-value="${s.questions[k].answer}"]`).click();await page.locator('[data-action=next]').click();}
+  for(let k=0;k<10;k++){const s=await page.evaluate(()=>JSON.parse(localStorage.getItem('biuno:v1')).sessions['mental-math']);await page.locator(`[data-action=pick][data-value="${s.questions[k].answer}"]`).click();await page.waitForFunction(()=>!document.querySelector('.feedback-box'));}
   await page.locator('[data-action=random]').click();await page.waitForURL(u=>u.pathname.startsWith(`/${lang}/`)&&!u.pathname.endsWith('/mental-math/'));assert.ok(!page.url().includes('/mental-math/'));
  }
  assert.deepEqual(errors,[]);await browser.close();

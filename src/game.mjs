@@ -41,33 +41,36 @@ function safeSession(s){
 let saved=load().sessions[id];if(!safeSession(saved))saved=null;
 function start(){stopTimers();g={...newGame(id,level,daily?`${day}:${id}`:`${Date.now()}:${Math.random()}`),daily,day};saved=null;persist();render();}
 function finish(won=true){stopTimers();g.status='finished';g.won=won;g.score=finishScore(g);record(load(),g);saved=null;updateBest();render();area.querySelector('h2')?.focus();}
-function feedback(right,answer){g.correct+=right?1:0;g.feedback={right,answer};if(g.phase)g.phase='feedback';persist();render();area.querySelector('[data-action=next]')?.focus();}
-function next(){g.round++;g.feedback=null;if(g.round===(id==='mental-math'?10:5)){finish(g.correct===(id==='mental-math'?10:5));return;}if(id==='what-changed')g.phase='study';if(id==='sequence-memory'){g.phase='watch';g.input=[];}persist();render();}
+function scheduleAdvance(){if(g?.feedback?.right&&!g.paused)later(()=>{if(g?.feedback?.right&&!g.paused&&g.status==='playing')next();},1600);}
+function feedback(right,answer){g.correct+=right?1:0;g.feedback={right,answer};if(g.phase)g.phase='feedback';persist();render();if(right)scheduleAdvance();else area.querySelector('[data-action=next]')?.focus();}
+function next(){stopTimers();g.round++;g.feedback=null;if(g.round===(id==='mental-math'?10:5)){finish(g.correct===(id==='mental-math'?10:5));return;}if(id==='what-changed')g.phase='study';if(id==='sequence-memory'){g.phase='watch';g.input=[];}persist();render();}
 function pause(){if(!g||g.status!=='playing'||g.paused)return;g.paused=true;stopTimers();if(id==='sequence-memory'&&g.phase==='input'){g.phase='watch';g.input=[];}persist();render();}
-function resume(){g.paused=false;if(id==='matching-pairs'&&g.open.length===2)g.open=[];persist();render();}
+function resume(){g.paused=false;if(id==='matching-pairs'&&g.open.length===2)g.open=[];persist();render();scheduleAdvance();}
 function stats(){if(id==='matching-pairs')return `<span>${t.moves}: <strong>${g.moves}</strong></span><span>${g.matched.length/2} / ${g.cards.length/2}</span>`;if(id==='pipes')return `<span>${t.moves}: <strong>${g.moves}</strong></span><span>${t.hints}: <strong>${g.hints}</strong></span>`;if(id==='codebreaker')return `<span>${t.guess}: <strong>${g.history.length} / 8</strong></span>`;return `<span>${t.challenge}: <strong>${g.round+1} / ${id==='mental-math'?10:5}</strong></span><span>${t.correct}: <strong>${g.correct}</strong></span>`;}
 function render(){
  const focus=document.activeElement?.dataset?.focus;
  levelSelect.disabled=Boolean(g&&g.status==='playing')||daily;updateBest();
  if(!g){area.innerHTML=`<div class="ready-board" aria-hidden="true">${readyBoard()}</div><div class="ready-actions">${saved?button(t.resumeSaved,'restore','button secondary'):''}${button(daily?t.dailyPlay:t.start,'start')}</div>`;return;}
- if(g.paused){area.innerHTML=`<div class="intro-game"><h2 tabindex="-1">${t.paused}</h2><p>${canSave()?t.pausedText:t.saveUnavailable}</p>${button(t.resume,'resume')}</div>`;area.querySelector('button').focus();return;}
+ if(g.paused){area.innerHTML=`<div class="intro-game"><h2 tabindex="-1">${t.paused}</h2><p>${canSave()?t.pausedText:t.saveUnavailable}</p><div class="intro-actions">${button(t.resume,'resume')}${button(t.reset,'reset','button secondary')}</div></div>`;if(document.querySelector('.game-help')?.open)document.querySelector('.game-help summary').focus({preventScroll:true});else area.querySelector('button').focus({preventScroll:true});return;}
  if(g.status==='finished'){renderResult();return;}
  let body='';
- if(g.feedback){const f=g.feedback;body=`<div class="feedback-box ${f.right?'good':'bad'}"><h2>${f.right?'✓ '+t.right:'× '+t.wrong}</h2>${id==='mental-math'?`<p>${t.answer}: <strong>${f.answer}</strong></p>`:id==='what-changed'?`<div class="intro-icon" style="width:52px;height:52px;margin:0 auto 16px;color:var(--color-accent)">${icon(f.answer)}</div>`:''}${button(t.next,'next')}</div>`;}
+ if(g.feedback){const f=g.feedback;body=`<div class="feedback-box ${f.right?'good':'bad'}" role="status"><h2>${f.right?'✓ '+t.right:'× '+t.wrong}</h2>${id==='mental-math'?`<p>${t.answer}: <strong>${f.answer}</strong></p>`:id==='what-changed'?`<div class="feedback-picture" role="img" aria-label="${t.symbols[f.answer]}">${icon(f.answer)}</div>`:''}<p>${f.right?t.autoNext:t.review}</p>${f.right?'':button(t.next,'next')}</div>`;}
  else if(id==='matching-pairs'){
   body=`<div class="board" style="--cols:4">${g.cards.map((v,k)=>{const show=g.matched.includes(k)||g.open.includes(k);return `<button type="button" class="cell ${show?'':'face-down'} ${g.matched.includes(k)?'matched':''}" data-action="pick" data-value="${k}" data-focus="pick-${k}" aria-label="${show?t.symbols[v]:`${t.hidden} ${k+1}`}" ${g.matched.includes(k)||g.open.includes(k)||g.open.length===2?'disabled':''}>${show?icon(v):''}</button>`;}).join('')}</div>`;
  }else if(id==='what-changed'){
-  const trial=g.trials[g.round],study=g.phase==='study';body=`<p class="game-message" role="status">${study?t.study:t.newPicture}</p><div class="board question-board ${study?'':'selecting'}" style="--cols:${g.level===0?2:3}">${(study?trial.before:trial.after).map((v,k)=>study?`<div class="cell" role="img" aria-label="${t.symbols[v]}">${icon(v)}</div>`:cell(v,k)).join('')}</div>${study?button(t.ready,'ready'):''}`;
+  const trial=g.trials[g.round],study=g.phase==='study';body=`<p class="game-message" role="status">${study?t.study:t.newPicture}</p><div class="board question-board ${study?'':'selecting'}" style="--cols:${g.level===0?2:3}">${(study?trial.before:trial.after).map((v,k)=>study?`<div class="cell" role="img" aria-label="${t.symbols[v]}">${icon(v)}</div>`:cell(v,k)).join('')}</div>`;
  }else if(id==='sequence-memory'){
   const watching=g.phase==='watch';body=`<p class="game-message" role="status">${watching?t.watch:t.repeat}</p><div class="board sequence-board">${sym.slice(0,4).map((v,k)=>cell(v,k,'',watching)).join('')}</div><div class="sequence-steps" aria-label="${g.input.length} / ${g.sequences[g.round].length}">${g.sequences[g.round].map((_,k)=>`<span class="${k<g.input.length?'done':''}"></span>`).join('')}</div>`;
  }else if(id==='mental-math'){
   const q=g.questions[g.round];body=`<p class="math-equation" aria-label="${q.a} ${q.op} ${q.b}">${q.a} ${q.op} ${q.b} <span aria-hidden="true">= ?</span></p><div class="math-answers">${q.choices.map((v,k)=>button(String(v),'pick','',`data-value="${v}" data-focus="pick-${k}"`)).join('')}</div>`;
  }else if(id==='codebreaker'){
-  const n=g.secret.length;body=`<div class="code-board" style="--length:${n}">${g.history.map((h,k)=>`<div class="code-row"><span class="code-number">${k+1}</span><div class="code-pegs">${h.guess.map(v=>`<span class="code-peg" role="img" aria-label="${t.symbols[sym[v]]}">${icon(sym[v])}</span>`).join('')}</div><span class="code-clues" aria-label="${h.exact} ${t.placed}, ${h.other} ${t.misplaced}">${'●'.repeat(h.exact)}${'○'.repeat(h.other)}${!h.exact&&!h.other?'—':''}</span></div>`).join('')}<div class="code-row"><span class="code-number">${g.history.length+1}</span><div class="code-pegs">${g.guess.map((v,k)=>`<button class="code-peg" data-action="position" data-value="${k}" data-focus="position-${k}" aria-current="${g.position===k}" aria-label="${t.position} ${k+1}: ${v===null?'—':t.symbols[sym[v]]}">${v===null?'<span>·</span>':icon(sym[v])}</button>`).join('')}</div><span class="code-clues"></span></div></div><p class="code-legend">● ${t.placed} &nbsp; ○ ${t.misplaced}</p><div class="code-palette" role="group" aria-label="${t.select}">${sym.map((v,k)=>`<button type="button" data-action="symbol" data-value="${k}" data-focus="symbol-${k}" aria-label="${t.symbols[v]}">${icon(v)}</button>`).join('')}</div><div class="action-row">${button(t.check,'check','button',g.guess.includes(null)?'disabled':'')}${button(t.clear,'clear','text-button')}</div>`;
+  const n=g.secret.length;body=`<div class="code-board" style="--length:${n}">${g.history.map((h,k)=>`<div class="code-row"><span class="code-number">${k+1}</span><div class="code-pegs">${h.guess.map(v=>`<span class="code-peg" role="img" aria-label="${t.symbols[sym[v]]}">${icon(sym[v])}</span>`).join('')}</div><span class="code-clues" aria-label="${h.exact} ${t.placed}, ${h.other} ${t.misplaced}">${'●'.repeat(h.exact)}${'○'.repeat(h.other)}${!h.exact&&!h.other?'—':''}</span></div>`).join('')}<div class="code-row"><span class="code-number">${g.history.length+1}</span><div class="code-pegs">${g.guess.map((v,k)=>`<button class="code-peg" data-action="position" data-value="${k}" data-focus="position-${k}" aria-current="${g.position===k}" aria-label="${t.position} ${k+1}: ${v===null?'—':t.symbols[sym[v]]}">${v===null?'<span>·</span>':icon(sym[v])}</button>`).join('')}</div><span class="code-clues"></span></div></div><p class="code-legend">● ${t.placed} &nbsp; ○ ${t.misplaced}</p><div class="code-palette" role="group" aria-label="${t.select}">${sym.map((v,k)=>`<button type="button" data-action="symbol" data-value="${k}" data-focus="symbol-${k}" aria-label="${t.symbols[v]}">${icon(v)}</button>`).join('')}</div>`;
  }else if(id==='pipes'){
-  const reached=connectedTiles(g.tiles,g.n);body=`<div class="board pipe-board" style="--cols:${g.n}">${g.tiles.map((mask,k)=>`<button type="button" class="cell pipe-tile ${reached.includes(k)?'reached':''} ${k===0?'source':''}" data-action="pick" data-value="${k}" data-focus="pick-${k}" aria-label="${t.tile} ${Math.floor(k/g.n)+1}, ${k%g.n+1}${reached.includes(k)?', '+t.connected:''}">${pipe(mask,k===0)}</button>`).join('')}</div><div class="action-row">${button(t.hint,'hint','button secondary')}</div>`;
+  const reached=connectedTiles(g.tiles,g.n);body=`<div class="board pipe-board" style="--cols:${g.n}">${g.tiles.map((mask,k)=>`<button type="button" class="cell pipe-tile ${reached.includes(k)?'reached':''} ${k===0?'source':''}" data-action="pick" data-value="${k}" data-focus="pick-${k}" aria-label="${t.tile} ${Math.floor(k/g.n)+1}, ${k%g.n+1}${reached.includes(k)?', '+t.connected:''}">${pipe(mask,k===0)}</button>`).join('')}</div>`;
  }
- area.innerHTML=`<div class="readout">${stats()}</div>${body}<div class="action-row">${button(t.pause,'pause','text-button')}${button(t.reset,'reset','text-button')}</div>${!canSave()?`<p class="save-warning">${t.saveUnavailable}</p>`:''}`;
+ const studying=id==='what-changed'&&g.phase==='study'&&!g.feedback;
+ const primary=studying?button(t.studyReady,'ready'):id==='codebreaker'?button(t.check,'check','button',g.guess.includes(null)?'disabled':''):id==='pipes'?button(t.hint,'hint','button secondary'):'';
+ area.innerHTML=`<div class="readout">${stats()}</div>${body}<div class="action-row">${studying?'':button(t.pause,'pause','button secondary')}${primary}</div>${!canSave()?`<p class="save-warning">${t.saveUnavailable}</p>`:''}`;
  if(focus){const target=area.querySelector(`[data-focus="${focus}"]`);(target&&!target.disabled?target:area.querySelector('[data-action=pick]:not(:disabled)'))?.focus({preventScroll:true});}
  if(id==='sequence-memory'&&g.phase==='watch'&&!g.feedback&&!playingSequence)playSequence();
 }
@@ -83,10 +86,10 @@ async function share(){
  const title=document.createElement('h2');title.textContent=t.share;
  const label=document.createElement('label');label.textContent=t.shareHelp;
  const input=document.createElement('input');input.value=url;input.readOnly=true;label.append(input);
- const close=document.createElement('button');close.className='button';close.textContent=t.ready;close.onclick=()=>dialog.close();
+ const close=document.createElement('button');close.className='button';close.textContent=t.close;close.onclick=()=>dialog.close();
  dialog.append(title,label,close);document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove());dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close();});dialog.showModal();input.select();
 }
-function playSequence(){playingSequence=true;const seq=g.sequences[g.round],step=[1000,850,700][g.level];seq.forEach((v,i)=>{later(()=>{const b=area.querySelector(`[data-value="${v}"]`);b?.classList.add('flash');},650+i*step);later(()=>{area.querySelector(`[data-value="${v}"]`)?.classList.remove('flash');},650+i*step+Math.min(500,step-200));});later(()=>{playingSequence=false;g.phase='input';g.input=[];persist();render();area.querySelector('[data-action=pick]')?.focus({preventScroll:true});},650+seq.length*step);}
+function playSequence(){playingSequence=true;const seq=g.sequences[g.round],step=[1300,1100,950][g.level];seq.forEach((v,i)=>{later(()=>{const b=area.querySelector(`[data-value="${v}"]`);b?.classList.add('flash');},650+i*step);later(()=>{area.querySelector(`[data-value="${v}"]`)?.classList.remove('flash');},650+i*step+650);});later(()=>{playingSequence=false;g.phase='input';g.input=[];persist();render();area.querySelector('[data-action=pick]')?.focus({preventScroll:true});},650+seq.length*step);}
 function pick(k){
  if(!g||g.paused||g.feedback||g.status!=='playing')return;
  if(id==='matching-pairs'){
@@ -101,7 +104,7 @@ function pick(k){
 }
 area.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b||b.disabled)return;const a=b.dataset.action,k=Number(b.dataset.value);
  if(a==='share'){share();return;}if(a==='random'){const others=ids.filter(x=>x!==id);location.href=`/${lang}/${others[Math.floor(Math.random()*others.length)]}/`;return;}
- if(a==='start'||a==='reset'){start();return;}if(a==='restore'){g=structuredClone(saved);level=g.level;levelSelect.value=String(level);g.paused=false;if(id==='matching-pairs'&&g.open.length===2)g.open=[];if(id==='sequence-memory'&&!g.feedback){g.phase='watch';g.input=[];}render();return;}
+ if(a==='start'||a==='reset'){start();return;}if(a==='restore'){g=structuredClone(saved);level=g.level;levelSelect.value=String(level);g.paused=false;if(id==='matching-pairs'&&g.open.length===2)g.open=[];if(id==='sequence-memory'&&!g.feedback){g.phase='watch';g.input=[];}render();scheduleAdvance();return;}
  if(a==='pause'){pause();return;}if(a==='resume'){resume();return;}if(a==='next'){next();return;}
  if(!g||g.paused||g.status!=='playing')return;
  if(a==='pick'){pick(k);return;}
@@ -114,6 +117,7 @@ area.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!
 });
 levelSelect.addEventListener('change',()=>{level=Number(levelSelect.value);const d=load();d.settings.level=level;save(d);render();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
+document.querySelector('.game-help')?.addEventListener('toggle',e=>{if(e.target.open)pause();});
 window.addEventListener('pagehide',persist);
 window.addEventListener('storage',e=>{if(e.key==='biuno:v1')updateBest();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&g?.status==='playing'){e.preventDefault();g.paused?resume():pause();}});

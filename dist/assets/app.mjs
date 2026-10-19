@@ -13,7 +13,7 @@ document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click'
 const day=dailyKey();
 if($('#daily-games')){
  $('#daily-date').textContent=new Intl.DateTimeFormat(t.dayFormat,{dateStyle:'long',timeZone:'UTC'}).format(new Date(day+'T12:00:00Z'))+' · UTC';
- $('#daily-games').innerHTML=dailyGames(day).map((i,k)=>`<a class="daily-item" href="/${lang}/${ids[i]}/?daily=${day}"><span aria-hidden="true">${String(k+1).padStart(2,'0')}</span><div><h3>${t.names[i]}</h3><small>${data.daily[`${day}:${ids[i]}`]?t.dailyDone:t[categories[i]]}</small></div><span class="arrow" aria-hidden="true">↗</span></a>`).join('');
+ $('#daily-games').innerHTML=dailyGames(day).map((i,k)=>`<a class="daily-item" href="/${lang}/${ids[i]}/?daily=${day}"><span aria-hidden="true">${String(k+1).padStart(2,'0')}</span><div><h3>${t.names[i]}</h3><small>${data.daily[`${day}:${ids[i]}`]?t.dailyDone:t[categories[i]]}</small></div></a>`).join('');
 }
 function renderProgress(){
  const root=$('#progress-content');if(!root)return;

@@ -4,6 +4,16 @@
     "scope": "app",
     "macrostructure": "Workbench",
     "theme": "custom",
+    "nav": "N9",
+    "footer": "Ft2",
+    "enrichment": "none",
+    "brief": "Readability refinement: filled symbols, 18px controls, strong contrast, expandable help and fewer clicks"
+  },
+  {
+    "date": "2026-10-19",
+    "scope": "app",
+    "macrostructure": "Workbench",
+    "theme": "custom",
     "theme_axes": "light / system-sans / cool",
     "nav": "N9",
     "footer": "Ft2",

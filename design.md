@@ -7,7 +7,7 @@ then the game itself as the main content. Preserve existing routes and game rule
 ## Genre and structure
 
 - Genre: modern-minimal, quiet and functional.
-- Game pages: Workbench. One large central play surface; instructions and best
+- Game pages: Workbench. One large central play surface; optional expandable instructions above the board and best
   score below, never in a competing sidebar.
 - Index pages: Catalogue. A compact game picker with no marketing hero.
 - Content pages: Long Document, readable and restrained.
@@ -45,6 +45,22 @@ Beleg.org uses blue/near-white surfaces and a prominent functional tool area.
 These are public visual references, not copied source or assets. Biuno uses its
 own UI and local fonts rather than the reference sites' loaded fonts.
 
+## Readability and simple play
+
+- Main text and game controls use at least 18px; compact navigation and metadata
+  use at least 16px. Text colours are darkened and borders are stronger.
+- Game symbols are original filled SVG silhouettes. Pipes use thicker strokes.
+- Remove decorative arrows. Native dropdown indicators remain functional cues.
+- Show one Start round action and an optional How to play disclosure with three
+  steps. New browsers begin at Easy; saved difficulty preferences remain intact.
+- Opening instructions pauses the round and leaves focus on the disclosure.
+- Correct answers advance after 1.6 seconds with a visible message. Incorrect
+  answers wait for an explicit Continue so players can review the explanation.
+- Picture study has no deadline. Sequence demonstration is slower and clearer.
+- During play, keep one shared control row. New round lives in the pause screen.
+- Pause, hiding the tab and reload/restore must never lose or double-count an
+  automatic transition. Saved records keep the existing storage schema.
+
 ## Exports
 
 ### tokens.css
@@ -59,11 +75,11 @@ own UI and local fonts rather than the reference sites' loaded fonts.
   --color-surface: oklch(97% 0.006 265);
   --color-paper-2: oklch(94% 0.01 265);
   --color-ink: oklch(25% 0.025 265);
-  --color-muted: oklch(46% 0.025 265);
+  --color-muted: oklch(36% 0.025 265);
   --color-accent: oklch(45% 0.19 265);
   --color-accent-ink: oklch(99% 0.003 265);
   --color-accent-soft: oklch(92% 0.035 265);
-  --color-rule: oklch(82% 0.014 265);
+  --color-rule: oklch(65% 0.014 265);
   --color-focus: oklch(32% 0.09 265);
   --color-good: oklch(36% 0.085 155);
   --color-good-soft: oklch(94% 0.025 155);
@@ -80,10 +96,10 @@ own UI and local fonts rather than the reference sites' loaded fonts.
   --space-xl: 32px;
   --space-2xl: 48px;
   --space-3xl: 64px;
-  --text-xs: .75rem;
-  --text-sm: .875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
+  --text-xs: 1rem;
+  --text-sm: 1.125rem;
+  --text-base: 1.125rem;
+  --text-lg: 1.25rem;
   --text-xl: 1.5rem;
   --text-heading: clamp(2rem, 4vw, 3rem);
   --text-display: clamp(2.6rem, 5.4vw, 4.8rem);
@@ -107,11 +123,11 @@ own UI and local fonts rather than the reference sites' loaded fonts.
   --color-surface: oklch(97% 0.006 265);
   --color-paper-2: oklch(94% 0.01 265);
   --color-ink: oklch(25% 0.025 265);
-  --color-muted: oklch(46% 0.025 265);
+  --color-muted: oklch(36% 0.025 265);
   --color-accent: oklch(45% 0.19 265);
   --color-accent-ink: oklch(99% 0.003 265);
   --color-accent-soft: oklch(92% 0.035 265);
-  --color-rule: oklch(82% 0.014 265);
+  --color-rule: oklch(65% 0.014 265);
   --color-focus: oklch(32% 0.09 265);
   --color-good: oklch(36% 0.085 155);
   --color-good-soft: oklch(94% 0.025 155);
@@ -128,10 +144,10 @@ own UI and local fonts rather than the reference sites' loaded fonts.
   --spacing-xl: 32px;
   --spacing-2xl: 48px;
   --spacing-3xl: 64px;
-  --text-xs: .75rem;
-  --text-sm: .875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
+  --text-xs: 1rem;
+  --text-sm: 1.125rem;
+  --text-base: 1.125rem;
+  --text-lg: 1.25rem;
   --text-xl: 1.5rem;
   --text-heading: clamp(2rem, 4vw, 3rem);
   --text-display: clamp(2.6rem, 5.4vw, 4.8rem);
@@ -163,7 +179,7 @@ own UI and local fonts rather than the reference sites' loaded fonts.
   },
   "color-muted": {
     "$type": "color",
-    "$value": "oklch(46% 0.025 265)"
+    "$value": "oklch(36% 0.025 265)"
   },
   "color-accent": {
     "$type": "color",
@@ -179,7 +195,7 @@ own UI and local fonts rather than the reference sites' loaded fonts.
   },
   "color-rule": {
     "$type": "color",
-    "$value": "oklch(82% 0.014 265)"
+    "$value": "oklch(65% 0.014 265)"
   },
   "color-focus": {
     "$type": "color",
@@ -247,19 +263,19 @@ own UI and local fonts rather than the reference sites' loaded fonts.
   },
   "text-xs": {
     "$type": "dimension",
-    "$value": ".75rem"
+    "$value": "1rem"
   },
   "text-sm": {
     "$type": "dimension",
-    "$value": ".875rem"
+    "$value": "1.125rem"
   },
   "text-base": {
     "$type": "dimension",
-    "$value": "1rem"
+    "$value": "1.125rem"
   },
   "text-lg": {
     "$type": "dimension",
-    "$value": "1.125rem"
+    "$value": "1.25rem"
   },
   "text-xl": {
     "$type": "dimension",
@@ -338,13 +354,13 @@ own UI and local fonts rather than the reference sites' loaded fonts.
   --secondary: 94% 0.01 265;
   --secondary-foreground: 25% 0.025 265;
   --muted: 94% 0.01 265;
-  --muted-foreground: 46% 0.025 265;
+  --muted-foreground: 36% 0.025 265;
   --accent: 45% 0.19 265;
   --accent-foreground: 99% 0.003 265;
   --destructive: 42% 0.14 25;
   --destructive-foreground: 99% 0.003 265;
-  --border: 82% 0.014 265;
-  --input: 82% 0.014 265;
+  --border: 65% 0.014 265;
+  --input: 65% 0.014 265;
   --ring: 32% 0.09 265;
   --radius: 8px;
 }

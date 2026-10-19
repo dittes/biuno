@@ -123,8 +123,8 @@ business details should only be added if they apply and are confirmed by the own
 ## Game-first redesign
 
 Game pages now use a compact wordmark/game/language navigation bar, a title and
-subtitle, and one large central play surface. Instructions and personal best sit
-below the board. Start screens show an inert board preview instead of repeating
+subtitle, and one large central play surface. Instructions expand above the board;
+the personal best sits below it. Start screens show an inert board preview instead of repeating
 the full instructions. On results, Play again is on the right, with Share with
 friends and Play another game as secondary actions. Random selection excludes
 the current game and retains the current language. Share opens the native share
@@ -134,3 +134,24 @@ selectable URL in a native dialog. No sharing happens without pressing the butto
 `npm run test:redesign` (with the same Playwright environment as above) checks
 these controls in all four languages, fresh replay seeds, preserved best scores,
 native sharing, clipboard and dialog fallbacks, share cancellation and navigation.
+
+## Readability refinement
+
+Game icons are original filled silhouettes, and pipes have thicker strokes.
+Main game text and controls use at least 18px, with at least 16px for compact
+navigation and metadata. Darkened text colours and stronger borders improve
+contrast. Decorative arrow glyphs are removed; native select indicators remain.
+
+How to play is an optional native disclosure above the board, with three clear
+steps. Opening it during play pauses the round and keeps keyboard focus on the
+disclosure. New browser profiles start at Easy; saved preferences are preserved.
+
+Correct answers advance after 1.6 seconds, without another click. Incorrect answers
+stay visible until the player chooses to continue. Picture study remains untimed.
+Sequence demonstrations are slower. During play, a single control row contains
+Pause and the current game's necessary action; New round is in the pause screen.
+
+`npm run test:readability` verifies these flows, including pausing and restoring
+pending automatic transitions, solid icons, large controls and measured text
+contrast of at least 7:1 for the main palette pairs. This is browser acceptance,
+not a claim of usability testing with older participants or full WCAG certification.
