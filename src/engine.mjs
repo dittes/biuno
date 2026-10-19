@@ -1,3 +1,4 @@
+import {classicIds,classicNew,classicScore} from './classic-engine.mjs';
 export function rng(seed) {
  let n = hash(String(seed));
  return () => { n |= 0; n = n + 0x6D2B79F5 | 0; let t = Math.imul(n ^ n >>> 15, 1 | n); t ^= t + Math.imul(t ^ t >>> 7, 61 | t); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
@@ -46,6 +47,7 @@ export function makeMath(level,random) {
 }
 export function newGame(id,level=1,seed=String(Date.now())) {
  const random=rng(seed),base={id,level,seed,status:'playing',paused:false,score:0,round:0,correct:0};
+ if(classicIds.includes(id))return {...base,...classicNew(id,level,random)};
  if(id==='matching-pairs'){const n=[6,8,10][level],v=shuffle([...Array(16).keys()],random).slice(0,n);return {...base,cards:shuffle([...v,...v],random),open:[],matched:[],moves:0};}
  if(id==='what-changed') return {...base,trials:Array.from({length:5},()=>{const a=shuffle([...Array(16).keys()],random),n=[4,6,8][level];return{before:a.slice(0,n),after:shuffle([...a.slice(0,n-1),a[n]],random),answer:a[n]};}),phase:'study',feedback:null};
  if(id==='sequence-memory')return {...base,sequences:Array.from({length:5},(_,i)=>Array.from({length:2+i+level},()=>Math.floor(random()*4))),phase:'watch',input:[],feedback:null};
@@ -55,6 +57,7 @@ export function newGame(id,level=1,seed=String(Date.now())) {
  throw new Error('Unknown game');
 }
 export function finishScore(g){
+ if(classicIds.includes(g.id))return classicScore(g);
  if(g.id==='matching-pairs')return Math.max(100,1000-(g.moves-g.cards.length/2)*25);
  if(g.id==='codebreaker')return g.won?Math.max(100,1100-g.history.length*100):0;
  if(g.id==='pipes')return Math.max(100,1200-g.moves*10-g.hints*150);

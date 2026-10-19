@@ -1,5 +1,6 @@
+import {content} from './content.mjs';
 export const languages = { en: 'English', de: 'Deutsch', cs: 'Čeština', pl: 'Polski' };
-export const ids = ['matching-pairs','what-changed','sequence-memory','codebreaker','pipes','mental-math'];
+export const ids = ['matching-pairs','what-changed','sequence-memory','codebreaker','pipes','mental-math','minesweeper','sea-battle','tic-tac-toe'];
 export const i18n = {
  en: {
   tagline:'A little time to play.', headline:'Give your day a little play.', intro:'Small games for curious minds. A few quiet minutes, a fresh puzzle, and the pleasure of figuring it out.',
@@ -74,8 +75,8 @@ export const i18n = {
   privacyTitle:'Twoja gra zostaje u Ciebie.', privacyBody:'Biuno nie wymaga konta. Kod gry używa localStorage w przeglądarce do zapisywania wyników, ustawień, dziennych rezultatów i niedokończonych rund. Te dane nie są wysyłane na serwer gry Biuno. Biuno nie dodaje reklam, skryptów analitycznych, zewnętrznych czcionek ani śledzących plików cookie.', privacyCache:'Service worker zapisuje pliki strony i gier na tym urządzeniu, umożliwiając grę offline po udanej pierwszej wizycie. Ustawienia przeglądarki mogą blokować zapis lub usuwać dane. Tryb prywatny może usunąć je po zamknięciu sesji.', privacyHost:'Dostawca hostingu może przetwarzać dane połączenia, takie jak adres IP i czas żądania, w celu udostępniania i zabezpieczania strony. Prywatny podgląd może dodatkowo wymagać logowania u dostawcy hostingu. Lokalne postępy nie synchronizują się między urządzeniami.', privacyContact:'Pytania dotyczące strony lub danych osobowych kieruj do operatora wymienionego w danych wydawcy.', legalTitle:'Dane wydawcy', legalIntro:'Informacje o usługodawcy zgodnie z § 5 niemieckiej ustawy DDG', operator:'Operator tej strony', contact:'Kontakt', country:'Niemcy', noResults:'Brak gier w tej kategorii.', symbols:['Liść','Słońce','Kubek','Klucz','Książka','Dom','Drzewo','Ryba','Gwiazda','Parasol','Kwiat','Księżyc','Romb','Dzwonek','Łódź','Serce']
  }
 };
-export const categories = ['memory','memory','memory','logic','logic','numbers'];
-export const durations = ['1–3','2–3','1–2','3–5','2–4','1–2'];
+export const categories = ['memory','memory','memory','logic','logic','numbers','logic','logic','logic'];
+export const durations = ['1–3','2–3','1–2','3–5','2–4','1–2','2–5','3–5','1–2'];
 const redesignCopy={
  en:{otherGame:'Choose a game',randomGame:'Play another game',share:'Share with friends',copied:'Link copied. Share it with a friend.',copyLink:'Copy link',shareHelp:'Copy this link to share the game.',homeIntro:'Pick a game and get straight to it.',newBest:'New personal best',highScore:'Personal best',roundScore:'Your score',another:'Another game',recordLabel:'Best'},
  de:{otherGame:'Spiel wählen',randomGame:'Anderes Spiel',share:'Mit Freunden teilen',copied:'Link kopiert. Teile ihn mit Freunden.',copyLink:'Link kopieren',shareHelp:'Kopiere diesen Link, um das Spiel zu teilen.',homeIntro:'Wähle ein Spiel und leg direkt los.',newBest:'Neuer persönlicher Rekord',highScore:'Persönlicher Rekord',roundScore:'Deine Punkte',another:'Anderes Spiel',recordLabel:'Rekord'},
@@ -120,3 +121,13 @@ const clearCopy={
 for(const lang of Object.keys(i18n))Object.assign(i18n[lang],clearCopy[lang]);
 
 for(const lang of Object.keys(i18n))i18n[lang].rules[1]=clearCopy[lang].steps[1].join(' ');
+
+for(const lang of Object.keys(i18n)){const t=i18n[lang],c=content[lang];t.names.push(...c.newNames);t.desc.push(...c.newCards);t.rules.push(...c.newRules);t.steps.push(...c.newSteps);Object.assign(t,c);t.steps[2][0]=c.intro[2];}
+
+const colourSteps={
+ en:['Start the round and watch which coloured, numbered buttons light up.','When it is your turn, press the same buttons in the same order.','Complete five sequences. Pause whenever you need; there is no response timer.'],
+ de:['Starte die Runde und beobachte, welche farbigen, nummerierten Tasten aufleuchten.','Wenn du dran bist, drücke dieselben Tasten in derselben Reihenfolge.','Spiele fünf Folgen. Du kannst jederzeit pausieren; beim Antworten läuft keine Zeit ab.'],
+ cs:['Spusťte kolo a sledujte, která barevná, očíslovaná tlačítka se rozsvítí.','Až budete na řadě, stiskněte stejná tlačítka ve stejném pořadí.','Zopakujte pět sekvencí. Kdykoli můžete hru pozastavit; na odpověď není časový limit.'],
+ pl:['Rozpocznij rundę i obserwuj, które kolorowe, ponumerowane przyciski się zapalają.','Gdy nadejdzie Twoja kolej, naciśnij te same przyciski w tej samej kolejności.','Powtórz pięć sekwencji. Możesz w każdej chwili włączyć pauzę; odpowiedzi nie mają limitu czasu.']
+};
+for(const lang of Object.keys(i18n)){i18n[lang].steps[2]=colourSteps[lang];i18n[lang].rules[2]=colourSteps[lang].join(' ');}

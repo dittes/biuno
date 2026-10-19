@@ -7,7 +7,7 @@ then the game itself as the main content. Preserve existing routes and game rule
 ## Genre and structure
 
 - Genre: modern-minimal, quiet and functional.
-- Game pages: Workbench. One large central play surface; optional expandable instructions above the board and best
+- Game pages: Workbench. One large central play surface; optional expandable instructions below the board and best
   score below, never in a competing sidebar.
 - Index pages: Catalogue. A compact game picker with no marketing hero.
 - Content pages: Long Document, readable and restrained.
@@ -49,7 +49,7 @@ own UI and local fonts rather than the reference sites' loaded fonts.
 
 - Main text and game controls use at least 18px; compact navigation and metadata
   use at least 16px. Text colours are darkened and borders are stronger.
-- Game symbols are original filled SVG silhouettes. Pipes use thicker strokes.
+- Game pictures use native colour emoji, as requested. Pipes use thick SVG strokes.
 - Remove decorative arrows. Native dropdown indicators remain functional cues.
 - Show one Start round action and an optional How to play disclosure with three
   steps. New browsers begin at Easy; saved difficulty preferences remain intact.
@@ -365,3 +365,13 @@ own UI and local fonts rather than the reference sites' loaded fonts.
   --radius: 8px;
 }
 ```
+
+
+## Familiar games refinement
+
+User-directed native emoji replace picture glyphs. Four coloured, numbered pads
+make the sequence game familiar. Left-aligned game titles lead into short playable
+instructions. Three native disclosures follow the board and personal best:
+How to play, About the game, Why it works. They share the board border token and
+thickness. Classical grids use large targets, visible numbers and marks, brief
+piece/reveal animations and reduced-motion support. No external font downloads.

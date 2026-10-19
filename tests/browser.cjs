@@ -14,7 +14,7 @@ const ids=['matching-pairs','what-changed','sequence-memory','codebreaker','pipe
  let layouts=0;const findings=[];
  for(const width of [320,375,414,768,1280]){
   await page.setViewportSize({width,height:900});
-  for(const lang of ['en','de','cs','pl'])for(const route of ['',...ids,'imprint','privacy','progress']){
+  for(const lang of ['en','de','cs','pl'])for(const route of ['',...ids,'minesweeper','sea-battle','tic-tac-toe','imprint','privacy','progress']){
    await page.goto(`${origin}/${lang}/${route?route+'/':''}`);
    await page.locator('footer').waitFor();
    const result=await page.evaluate(()=>{
@@ -28,7 +28,7 @@ const ids=['matching-pairs','what-changed','sequence-memory','codebreaker','pipe
   }
  }
  await page.setViewportSize({width:375,height:812});await page.goto(origin+'/de/');await page.screenshot({path:'artifacts/home-mobile.png',fullPage:true});
- await page.getByRole('button',{name:'Logik',exact:true}).click();assert.equal(await page.locator('.game-card:visible').count(),2);
+ await page.getByRole('button',{name:'Logik',exact:true}).click();assert.equal(await page.locator('.game-card:visible').count(),5);
  await page.selectOption('#language','/pl/');await page.waitForURL('**/pl/');assert.equal(await page.locator('html').getAttribute('lang'),'pl');
  console.log('Layout audit:',layouts,'pages/viewports;',findings.length,'findings');
  await fs.writeFile('artifacts/layout-findings.json',JSON.stringify(findings,null,2));

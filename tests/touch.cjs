@@ -6,7 +6,7 @@ const origin=process.env.PREVIEW_URL||'http://localhost:4173';
  const browser=await chromium.launch({headless:true,...(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:{})});
  const context=await browser.newContext({hasTouch:true,isMobile:true,viewport:{width:375,height:812},serviceWorkers:'block'});
  const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));const findings=[];let checks=0;
- for(const width of [320,375,414,768])for(const lang of ['en','de','cs','pl'])for(const id of ['matching-pairs','what-changed','sequence-memory','codebreaker','pipes','mental-math']){
+ for(const width of [320,375,414,768])for(const lang of ['en','de','cs','pl'])for(const id of ['matching-pairs','what-changed','sequence-memory','codebreaker','pipes','mental-math','minesweeper','sea-battle','tic-tac-toe']){
   await page.setViewportSize({width,height:900});await page.goto(`${origin}/${lang}/${id}/`);await page.selectOption('#difficulty','2');await page.locator('[data-action=start]').tap();
   const bad=await page.locator('button:visible,select:visible').evaluateAll(es=>es.filter(e=>!e.disabled).flatMap(e=>{const r=e.getBoundingClientRect();return r.width<43.9||r.height<43.9||r.right>innerWidth+.5?[{cls:e.className,text:e.textContent.slice(0,30),w:r.width,h:r.height,right:r.right}]:[];}));
   if(bad.length)findings.push({width,lang,id,bad});checks++;

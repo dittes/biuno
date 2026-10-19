@@ -18,13 +18,18 @@ const paths=[
  '<path d="M25 2v28h20L25 2ZM20 8 3 30h17V8ZM2 34h44l-9 12H11L2 34Z"/>',
  '<path d="M24 44 5 26C-7 13 10-3 24 11 38-3 55 13 43 26L24 44Z"/>'
 ];
-export function icon(i,cls=''){return `<svg class="game-symbol ${cls}" viewBox="0 0 48 48" fill="currentColor" stroke="none" aria-hidden="true">${paths[i%paths.length]}</svg>`;}
+const emoji=['🍃','☀️','☕','🔑','📖','🏠','🌳','🐟','⭐','☂️','🌼','🌙','💎','🔔','⛵','❤️'];
+export function icon(i,cls=''){return `<span class="emoji-symbol ${cls}" aria-hidden="true">${emoji[i%emoji.length]}</span>`;}
+export function sequencePad(k,disabled=false,label=''){return `<button type="button" class="cell sequence-pad pad-${k}" data-action="pick" data-value="${k}" data-focus="pick-${k}" aria-label="${label||k+1}" ${disabled?'disabled':''}><span>${k+1}</span></button>`;}
 export function pipe(mask,root=false){return `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" aria-hidden="true">${mask&1?'<path d="M32 32V0"/>':''}${mask&2?'<path d="M32 32h32"/>':''}${mask&4?'<path d="M32 32v32"/>':''}${mask&8?'<path d="M32 32H0"/>':''}<circle cx="32" cy="32" r="${root?7:3}" fill="currentColor" stroke-width="0"/></svg>`;}
 export function preview(i){
  if(i===0)return `<div class="preview-cards">${[0,1,2,3,1,0].map((v,k)=>`<span class="${k===2||k===3?'covered':''}">${k===2||k===3?'<span class="card-dot"></span>':icon(v)}</span>`).join('')}</div>`;
  if(i===1)return `<div class="preview-change">${[4,6,1,2].map((v,k)=>`<span class="${k===3?'outlined':''}">${icon(v)}</span>`).join('')}</div>`;
- if(i===2)return `<div class="preview-sequence">${[1,8,12,11].map((v,k)=>`<span class="${k===1?'highlight':''}">${icon(v)}</span>`).join('')}</div>`;
+ if(i===2)return `<div class="preview-sequence">${[0,1,2,3].map(k=>`<span class="pad-${k}">${k+1}</span>`).join('')}</div>`;
  if(i===3)return `<div class="preview-code">${[0,1,3].map(v=>`<div>${[1,8,12,11].map((n,k)=>`<span>${icon(n+v)}</span>`).join('')}<b>${v===0?'● ○':v===1?'● ●':'● ● ● ●'}</b></div>`).join('')}</div>`;
+ if(i===6)return '<div class="classic-preview">🚩 <b>1</b> <b>2</b><br>1 ◻ ◻</div>';
+ if(i===7)return '<div class="classic-preview">⛵<br>· × ·<br>· · ×</div>';
+ if(i===8)return '<div class="classic-preview tic-preview">X O X<br>· O ·<br>X · ·</div>';
  if(i===4)return `<div class="preview-pipes">${[6,10,12,3,12,5,2,11,9].map((v,k)=>`<span>${pipe(v,k===0)}</span>`).join('')}</div>`;
  return '<div class="preview-math"><span>12 <b>+</b> 7</span><div><i>17</i><i class="answer-preview">19</i><i>21</i></div></div>';
 }

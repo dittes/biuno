@@ -13,7 +13,7 @@ const origin=process.env.PREVIEW_URL||'http://localhost:4173';
   assert.equal(/[↗→←↓↑]/.test(await p.locator('body').innerText()),false);
   await p.locator('[data-action=start]').click();assert.equal(await p.locator('[data-action=ready]').count(),1);assert.equal(await p.locator('[data-action=pause]').count(),0);
   const fonts=await p.locator('.game-message,.readout,.button,.game-heading>p').evaluateAll(es=>es.map(e=>parseFloat(getComputedStyle(e).fontSize)));assert.ok(fonts.every(n=>n>=18),JSON.stringify(fonts));
-  const solid=await p.locator('.question-board svg').evaluateAll(es=>es.every(e=>e.getAttribute('fill')==='currentColor'));assert.equal(solid,true);
+  assert.equal(await p.locator('.question-board .emoji-symbol').count(),4);
  }
  await p.goto(origin+'/en/mental-math/');await p.locator('[data-action=start]').click();
  let s=await state();await p.locator(`[data-action=pick][data-value="${s.questions[0].answer}"]`).click();assert.equal(await p.locator('[data-action=next]').count(),0);await p.clock.runFor(1200);assert.equal((await state()).round,0);await p.locator('[data-action=pause]').click();await p.clock.runFor(5000);assert.equal((await state()).round,0);await p.locator('[data-action=resume]').click();await p.clock.runFor(1700);assert.equal((await state()).round,1);assert.equal((await state()).correct,1);

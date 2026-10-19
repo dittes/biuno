@@ -44,3 +44,4 @@
   --ease-in: cubic-bezier(.7, 0, .84, 0);
   --ease-in-out: cubic-bezier(.65, 0, .35, 1);
 }
+:root{--color-pad-green:oklch(43% .13 150);--color-pad-red:oklch(46% .18 25);--color-pad-yellow:oklch(86% .15 90);--color-pad-blue:oklch(44% .2 265);--font-emoji:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;}

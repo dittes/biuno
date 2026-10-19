@@ -1,0 +1,21 @@
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const assert=require('node:assert/strict');
+(async()=>{
+ const b=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH});const c=await b.newContext({viewport:{width:375,height:900},serviceWorkers:'block'});const p=await c.newPage();p.setDefaultTimeout(10000);await p.clock.install();const errors=[];p.on('pageerror',e=>errors.push(e.message));
+ const state=id=>p.evaluate(id=>JSON.parse(localStorage.getItem('biuno:v1')).sessions[id],id);
+ for(const lang of ['en','de','cs','pl']){
+  for(const id of ['minesweeper','sea-battle','tic-tac-toe']){
+   console.log('Checking',lang,id);await p.goto(`http://localhost:4173/${lang}/${id}/`);assert.equal(await p.locator('.game-facts details').count(),3);assert.ok(await p.locator('.game-help').evaluate(e=>e.getBoundingClientRect().top>document.querySelector('.play-panel').getBoundingClientRect().bottom));const borders=await p.locator('.play-panel,.game-facts details').evaluateAll(es=>es.map(e=>[getComputedStyle(e).borderTopWidth,getComputedStyle(e).borderTopColor]));assert.ok(borders.every(v=>JSON.stringify(v)===JSON.stringify(borders[0])));
+   await p.selectOption('#difficulty','2');await p.locator('[data-action=start]').click();
+   if(id==='minesweeper'){
+    await p.locator('[data-value="14"][data-action=pick]').click();let s=await state(id);console.log('first reveal');assert.ok(s.generated);assert.ok(!s.mines.includes(14));const mine=s.mines[0];await p.locator('[data-tool=flag]').click();await p.locator(`[data-action=pick][data-value="${mine}"]`).click();assert.ok((await state(id)).flags.includes(mine));await p.locator('[data-tool=reveal]').click();await p.locator('[data-action=pause]').click();console.log('restore mines');await p.reload();await p.locator('[data-action=restore]').click();s=await state(id);assert.ok(s.flags.includes(mine));for(const k of Array.from({length:36},(_,k)=>k).filter(k=>!s.mines.includes(k))){const btn=p.locator(`[data-action=pick][data-value="${k}"]`);if(await p.locator('.result').count())break;if(!await btn.isDisabled())await btn.click();}
+   }else if(id==='tic-tac-toe'){
+    while(!await p.locator('.result').count()){const s=await state(id);if(s.turn==='O'){await p.clock.runFor(700);continue;}const k=s.board.findIndex(v=>!v);await p.locator(`[data-action=pick][data-value="${k}"]`).click();await p.clock.runFor(700);}
+   }else{
+    let s=await state(id);await p.locator(`[data-action=pick][data-value="${s.enemyFleet[0][0]}"]`).click();await p.locator('[data-action=pause]').click();const shots=(await state(id)).enemyShots.length;await p.clock.runFor(3000);assert.equal((await state(id)).enemyShots.length,shots);await p.reload();await p.locator('[data-action=restore]').click();await p.clock.runFor(700);assert.equal((await state(id)).enemyShots.length,shots+1);s=await state(id);for(const k of s.enemyFleet.flat()){if(await p.locator('.result').count())break;const btn=p.locator(`[data-action=pick][data-value="${k}"]`);if(!await btn.isDisabled()){await btn.click();await p.clock.runFor(700);}}
+   }
+   assert.equal(await p.locator('.result-actions [data-action=start]').count(),1);assert.equal(await p.locator('.result-actions [data-action=random]').count(),1);assert.equal(await p.locator('.result-actions [data-action=share]').count(),1);await p.screenshot({path:`artifacts/${id}-${lang}-result.png`,fullPage:true});await p.locator('[data-action=start]').click();assert.equal(await p.locator('.result').count(),0);await p.screenshot({path:`artifacts/${id}-${lang}-mobile.png`,fullPage:true});
+  }
+ }
+ await p.goto('http://localhost:4173/en/sequence-memory/');const colours=await p.locator('.sequence-pad').evaluateAll(es=>es.map(e=>getComputedStyle(e).backgroundColor));assert.equal(new Set(colours).size,4);await p.screenshot({path:'artifacts/sequence-colour-mobile.png',fullPage:true});await p.setViewportSize({width:1280,height:1000});await p.goto('http://localhost:4173/en/sea-battle/');await p.screenshot({path:'artifacts/sea-desktop.png',fullPage:true});assert.deepEqual(errors,[]);await b.close();console.log('Classic games: all four locales, completed rounds, flagging, opponent pause/restore, replay, disclosures and four-colour sequence passed.');
+})().catch(e=>{console.error(e);process.exit(1);});

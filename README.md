@@ -1,6 +1,6 @@
 # Biuno
 
-A static, multilingual collection of six short browser games. English, German,
+A static, multilingual collection of nine short browser games. English, German,
 Czech and Polish pages are generated as ordinary HTML. The games use vanilla
 JavaScript; there is no backend, user account, framework, external font, CDN,
 analytics script or advertising dependency.
@@ -27,6 +27,9 @@ HTML through `file://` does not provide reliable storage or service workers.
 | Matching Pairs | One board; 6, 8 or 10 pairs | Three difficulties |
 | What Changed? | Five image-replacement questions | 4, 6 or 8 pictures |
 | Sequence Memory | Five increasingly long sequences | Three lengths/speeds |
+| Minesweeper | Clear every safe cell | 5, 7 or 9 mines on a 6×6 board |
+| Sea Battle | Sink three ships | Random, targeted or checkerboard computer search |
+| Tic-tac-toe | Three in a row | Random, defensive or perfect opponent |
 | Codebreaker | One code; eight attempts | 3, 4 or 5 positions; six symbols |
 | Pipe Puzzle | Connect one generated pipe network | 3×3, 4×4 or 5×5; optional hints |
 | Mental Math | Ten multiple-choice questions | Three number ranges |
@@ -41,9 +44,9 @@ demonstration on resume. Scores are separate by game and difficulty.
 ## Source layout
 
 - `src/engine.mjs`: deterministic generators, pipe validation, code feedback, scoring.
-- `src/game.mjs`: shared round controller and six game interfaces.
+- `src/game.mjs`: shared round controller and nine game interfaces.
 - `src/i18n.mjs`: all four translation dictionaries.
-- `src/art.mjs`: original SVG symbols and board previews.
+- `src/art.mjs`: native emoji pictures, pipe SVGs and board previews.
 - `src/storage.mjs`: versioned local state and records.
 - `src/app.mjs`: language navigation, filtering, daily links, progress management.
 - `tokens.css`, `styles.css`, `redesign.css`: local system fonts, royal blue/grey
@@ -100,7 +103,7 @@ The site makes no IQ-measurement or medical cognitive-improvement claims.
 
 ## Verification
 
-`npm test` exercises all six generators, repeated-symbol code feedback,
+`npm test` exercises all nine generators, repeated-symbol code feedback,
 450 generated pipe boards, 1,500 arithmetic questions, daily selection and locale
 coverage. `npm run verify` checks generated HTML, locale alternates, local links
 and offline versioning.
@@ -111,7 +114,7 @@ Optional browser acceptance uses Playwright and installed Chrome/Chromium:
 PLAYWRIGHT_MODULE=/absolute/path/to/playwright CHROME_PATH='/path/to/chrome' node tests/browser.cjs
 ```
 
-It audits all 40 locale routes at 320, 375, 414, 768 and 1280px, completes all six
+It audits all 52 locale routes at 320, 375, 414, 768 and 1280px, completes all six
 games through their UI, exercises mismatch/pause/resume and locale persistence,
 progress export/reset/undo, offline navigation and denied storage. Screenshots
 and machine-readable results go to ignored `artifacts/`. Physical devices and
@@ -123,7 +126,7 @@ business details should only be added if they apply and are confirmed by the own
 ## Game-first redesign
 
 Game pages now use a compact wordmark/game/language navigation bar, a title and
-subtitle, and one large central play surface. Instructions expand above the board;
+subtitle, and one large central play surface. Instructions expand below the board;
 the personal best sits below it. Start screens show an inert board preview instead of repeating
 the full instructions. On results, Play again is on the right, with Share with
 friends and Play another game as secondary actions. Random selection excludes
@@ -142,7 +145,7 @@ Main game text and controls use at least 18px, with at least 16px for compact
 navigation and metadata. Darkened text colours and stronger borders improve
 contrast. Decorative arrow glyphs are removed; native select indicators remain.
 
-How to play is an optional native disclosure above the board, with three clear
+How to play is an optional native disclosure below the board, with three clear
 steps. Opening it during play pauses the round and keeps keyboard focus on the
 disclosure. New browser profiles start at Easy; saved preferences are preserved.
 
@@ -155,3 +158,18 @@ Pause and the current game's necessary action; New round is in the pause screen.
 pending automatic transitions, solid icons, large controls and measured text
 contrast of at least 7:1 for the main palette pairs. This is browser acceptance,
 not a claim of usability testing with older participants or full WCAG certification.
+
+
+The familiar-games update adds Minesweeper (safe first neighbourhood, flood reveal,
+flags), Sea Battle (automatic fleets and a computer opponent), and Tic-tac-toe
+(random, defensive and perfect-play opponents). All have three difficulty levels,
+resumable rounds, local records and replay/share/random-game controls. Sea Battle
+uses the generic name to avoid presenting this independent game as a Hasbro product.
+
+Game pictures are native colour emoji; Sequence Memory uses four coloured,
+numbered pads. Instructions, sourced background and a task-specific explanation
+of the skills used are native disclosures below the game. No claims of general
+cognitive improvement are made. SEO titles and visible about headings include
+localized “play [game] online” language. Microanimations respect reduced motion.
+`npm run test:classics` completes all three additions in four languages, checks
+flags, opponent pause/restore, replay, matching disclosure borders and pad colours.
