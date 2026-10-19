@@ -12,6 +12,7 @@
     "test:touch": "node tests/touch.cjs",
     "test:redesign": "node tests/redesign.cjs",
     "test:readability": "node tests/readability.cjs",
-    "test:classics": "node tests/classics.cjs"
+    "test:classics": "node tests/classics.cjs",
+    "test:rounds": "node tests/rounds.cjs"
   }
 }

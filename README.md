@@ -127,7 +127,7 @@ business details should only be added if they apply and are confirmed by the own
 
 Game pages now use a compact wordmark/game/language navigation bar, a title and
 subtitle, and one large central play surface. Instructions expand below the board;
-the personal best sits below it. Start screens show an inert board preview instead of repeating
+the personal best sits in the top-right corner of the playing box. Start screens show concise instructions and a centred Start button instead of repeating
 the full instructions. On results, Play again is on the right, with Share with
 friends and Play another game as secondary actions. Random selection excludes
 the current game and retains the current language. Share opens the native share
@@ -167,9 +167,30 @@ resumable rounds, local records and replay/share/random-game controls. Sea Battl
 uses the generic name to avoid presenting this independent game as a Hasbro product.
 
 Game pictures are native colour emoji; Sequence Memory uses four coloured,
-numbered pads. Instructions, sourced background and a task-specific explanation
+numbered pads. Instructions, general game background and a task-specific explanation
 of the skills used are native disclosures below the game. No claims of general
 cognitive improvement are made. SEO titles and visible about headings include
 localized “play [game] online” language. Microanimations respect reduced motion.
 `npm run test:classics` completes all three additions in four languages, checks
 flags, opponent pause/restore, replay, matching disclosure borders and pad colours.
+
+
+### Start, play and replay
+
+Each game uses the same box for a centred instruction/start screen, live play,
+and the result screen. The toolbar pairs difficulty with the personal best for
+that difficulty. A small inert view of the actual final puzzle appears beside
+the round score. Encouragement rotates across rounds and uses the previous
+record to distinguish first scores, improved records, ties, near misses and
+larger gaps. Score comparisons use actual values, with locale-aware formatting.
+
+Win/record confetti stays inside the game box, never intercepts taps and clears
+after 2.2 seconds. Start/replay buttons have a brief, occasional wobble; the
+wordmark and dot have a short entrance animation. Reduced-motion preferences
+remove decorative animations and confetti. No external links or competitor
+references are displayed on game pages.
+
+`npm run test:rounds` checks 180 start-screen combinations, record placement,
+actual-score messages, result previews, confetti cleanup, replay and saved-round
+resume, including reduced motion. `src/round-ui.mjs` owns pure result previews
+and score-aware encouragement.

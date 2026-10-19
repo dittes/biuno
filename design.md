@@ -8,7 +8,7 @@ then the game itself as the main content. Preserve existing routes and game rule
 
 - Genre: modern-minimal, quiet and functional.
 - Game pages: Workbench. One large central play surface; optional expandable instructions below the board and best
-  score below, never in a competing sidebar.
+  score at the top right of the game box.
 - Index pages: Catalogue. A compact game picker with no marketing hero.
 - Content pages: Long Document, readable and restrained.
 - Navigation: N9 edge-aligned. Biuno left, a native game selector and short
@@ -375,3 +375,17 @@ instructions. Three native disclosures follow the board and personal best:
 How to play, About the game, Why it works. They share the board border token and
 thickness. Classical grids use large targets, visible numbers and marks, brief
 piece/reveal animations and reduced-motion support. No external font downloads.
+
+
+## Start / play / replay refinement
+
+A single play box holds every phase. Intro text and the primary start action
+sit centrally in the vacant play area; difficulty and personal best sit opposite
+each other in its toolbar. Results replace the live board, placing a compact
+inert final-state preview beside the score, encouragement and replay/share
+controls. Record comparisons are factual and use the previous best.
+
+The user requested more motion: brief in-box confetti on wins or improved
+records, score/section arrivals, a gentle occasional play-button wobble and a
+short wordmark-dot greeting. No decorative motion runs with reduced motion.
+Game background omits competitor names and links outside the site.

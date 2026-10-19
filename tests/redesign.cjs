@@ -11,7 +11,7 @@ const languages=['en','de','cs','pl'];
  for(const lang of languages){
   await page.goto(`${origin}/${lang}/matching-pairs/`);
   await page.selectOption('#difficulty','0');
-  assert.equal(await page.locator('.ready-board .cell').count(),12);
+  assert.equal(await page.locator('.round-start [data-action=start]').count(),1);assert.equal(await page.locator('.round-start>p').count(),2);
   assert.equal(await page.locator('.masthead,.main-nav,.game-aside,.opening').count(),0);
   const brand=await page.locator('.wordmark').boundingBox(),nav=await page.locator('#game-nav').boundingBox();assert.ok(brand.x<nav.x);
   await page.locator('[data-action=start]').click();

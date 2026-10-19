@@ -4,6 +4,7 @@ import {load,save,record,canSave} from './storage.mjs';
 import {classicIds,revealMine,flagMine,ticMove,ticComputer,navalShot,navalComputer} from './classic-engine.mjs';
 import {classicBoard,classicStats} from './classic-ui.mjs';
 import {icon,pipe,sequencePad} from './art.mjs';
+import {encouragement,finalBoard,confetti} from './round-ui.mjs';
 import {notify} from './app.mjs';
 const lang=document.documentElement.lang,t=i18n[lang]||i18n.en,id=document.body.dataset.game,index=ids.indexOf(id);
 const area=document.querySelector('#game-area'),levelSelect=document.querySelector('#difficulty'),best=document.querySelector('#best-score');
@@ -18,17 +19,6 @@ function persist(){if(!g||g.status!=='playing')return;const d=load();d.sessions[
 function updateBest(){const r=load().records[`${id}:${level}`];best.textContent=r?`${r.best.toLocaleString(lang)}`:'—';}
 levelSelect.value=String(level);document.querySelector('#mode-label').textContent=daily?t.dailyMode:t.freeMode;
 document.querySelector('#toolbar-daily').hidden=!daily;
-function readyBoard(){
- const p=newGame(id,level,'biuno-preview');
- if(classicIds.includes(id))return classicBoard(p,t,true);
- const picture=v=>`<div class="cell">${icon(v)}</div>`;
- if(id==='matching-pairs')return `<div class="board">${p.cards.map((v,k)=>`<div class="cell ${[0,5].includes(k)?'':'face-down'}">${[0,5].includes(k)?icon(v):''}</div>`).join('')}</div>`;
- if(id==='what-changed')return `<div class="board question-board" style="--cols:${level===0?2:3}">${p.trials[0].before.map(picture).join('')}</div>`;
- if(id==='sequence-memory')return `<div class="board sequence-board">${[0,1,2,3].map(k=>sequencePad(k,true,t.padNames[k])).join('')}</div>`;
- if(id==='pipes')return `<div class="board pipe-board" style="--cols:${p.n}">${p.tiles.map((v,k)=>`<div class="cell pipe-tile ${k===0?'reached':''}">${pipe(v,k===0)}</div>`).join('')}</div>`;
- if(id==='mental-math'){const q=p.questions[0];return `<div class="ready-math"><p class="math-equation">${q.a} ${q.op} ${q.b} = ?</p><div class="math-answers">${q.choices.map(v=>`<span>${v}</span>`).join('')}</div></div>`;}
- return `<div class="ready-code"><div class="code-pegs" style="--length:${p.secret.length}">${p.secret.map(()=>'<span class="code-peg">·</span>').join('')}</div><div class="code-palette">${sym.map(v=>`<span class="code-peg">${icon(v)}</span>`).join('')}</div></div>`;
-}
 function safeSession(s){
  if(!s||s.id!==id||s.status!=='playing'||!Number.isInteger(s.level)||s.level<0||s.level>2||typeof s.seed!=='string'||!Number.isInteger(s.round)||s.round<0||s.round>10||!Number.isFinite(s.correct)||s.correct<0||s.correct>10)return false;
  if(Boolean(s.daily)!==daily||(daily&&s.day!==day))return false;
@@ -46,7 +36,7 @@ function safeSession(s){
 }
 let saved=load().sessions[id];if(!safeSession(saved))saved=null;
 function start(){stopTimers();g={...newGame(id,level,daily?`${day}:${id}`:`${Date.now()}:${Math.random()}`),daily,day};saved=null;persist();render();}
-function finish(won=true){stopTimers();g.status='finished';g.won=won;g.score=finishScore(g);record(load(),g);saved=null;updateBest();render();area.querySelector('h2')?.focus();}
+function finish(won=true){stopTimers();g.status='finished';g.won=won;g.score=finishScore(g);const previous=load().records[`${id}:${g.level}`];g.previousBest=previous?.best||0;g.previousPlayed=previous?.played||0;record(load(),g);saved=null;updateBest();render();area.querySelector('h2')?.focus();}
 function scheduleAdvance(){if(g?.feedback?.right&&!g.paused)later(()=>{if(g?.feedback?.right&&!g.paused&&g.status==='playing')next();},1600);}
 function feedback(right,answer){g.correct+=right?1:0;g.feedback={right,answer};if(g.phase)g.phase='feedback';persist();render();if(right)scheduleAdvance();else area.querySelector('[data-action=next]')?.focus();}
 function next(){stopTimers();g.round++;g.feedback=null;if(g.round===(id==='mental-math'?10:5)){finish(g.correct===(id==='mental-math'?10:5));return;}if(id==='what-changed')g.phase='study';if(id==='sequence-memory'){g.phase='watch';g.input=[];}persist();render();}
@@ -56,7 +46,7 @@ function stats(){if(classicIds.includes(id))return classicStats(g,t);if(id==='ma
 function render(){
  const focus=document.activeElement?.dataset?.focus;
  levelSelect.disabled=Boolean(g&&g.status==='playing')||daily;updateBest();
- if(!g){area.innerHTML=`<div class="ready-board" aria-hidden="true">${readyBoard()}</div><div class="ready-actions">${saved?button(t.resumeSaved,'restore','button secondary'):''}${button(daily?t.dailyPlay:t.start,'start')}</div>`;return;}
+ if(!g){const played=load().records[`${id}:${level}`]?.played||0;area.innerHTML=`<div class="round-start"><h2>${t.readyTitle}</h2><p>${t.desc[index]}</p><div class="start-actions">${saved?button(t.resumeSaved,'restore','button invite-play'):''}${button(daily?t.dailyPlay:t.start,'start',saved?'button secondary':'button invite-play')}</div><p class="start-note">${t.readyNotes[played%t.readyNotes.length]}</p></div>`;return;}
  if(g.paused){area.innerHTML=`<div class="intro-game"><h2 tabindex="-1">${t.paused}</h2><p>${canSave()?t.pausedText:t.saveUnavailable}</p><div class="intro-actions">${button(t.resume,'resume')}${button(t.reset,'reset','button secondary')}</div></div>`;if(document.querySelector('.game-help')?.open)document.querySelector('.game-help summary').focus({preventScroll:true});else area.querySelector('button').focus({preventScroll:true});return;}
  if(g.status==='finished'){renderResult();return;}
  let body='';
@@ -83,9 +73,12 @@ function render(){
  scheduleComputer();
  if(id==='sequence-memory'&&g.phase==='watch'&&!g.feedback&&!playingSequence)playSequence();
 }
-function renderResult(){let detail='';if(id==='matching-pairs'||id==='pipes')detail=`<span>${t.moves}<strong>${g.moves}</strong></span>`;else if(id==='codebreaker')detail=`<span>${t.guess}<strong>${g.history.length} / 8</strong></span>`;else if(classicIds.includes(id))detail=`<span>${t.moves}<strong>${g.moves}</strong></span>`;else detail=`<span>${t.correct}<strong>${g.correct} / ${id==='mental-math'?10:5}</strong></span>`;
- const reveal=classicIds.includes(id)?classicBoard(g,t):id==='codebreaker'&&!g.won?`<p>${t.codeLost}</p><div class="code-palette" style="margin:0 auto" aria-label="${t.code}">${g.secret.map(v=>`<span class="code-peg" role="img" aria-label="${t.symbols[sym[v]]}">${icon(sym[v])}</span>`).join('')}</div>`:'';
- area.innerHTML=`<div class="result"><div class="result-mark" aria-hidden="true">${g.won?'✓':'·'}</div><h2 tabindex="-1">${classicIds.includes(id)?(g.outcome==='win'?t.youWin:g.outcome==='draw'?t.draw:t.youLose):g.won&&(id==='pipes'||id==='codebreaker')?t.solved:t.finish}</h2><span class="result-label">${t.roundScore}</span><div class="result-score">${g.score}</div><div class="result-details">${detail}<span>${t.highScore}<strong>${load().records[`${id}:${g.level}`]?.best||0}</strong></span></div>${reveal}</div><div class="result-actions"><div class="result-secondary">${button(t.share,'share','button secondary')}${button(t.randomGame,'random','button secondary')}</div>${button(t.again,'start','button play-again')}</div>${!canSave()?`<p class="save-warning">${t.saveUnavailable}</p>`:''}`;}
+function renderResult(){
+ const mood=encouragement(g,t,lang),heading=classicIds.includes(id)?(g.outcome==='win'?t.youWin:g.outcome==='draw'?t.draw:t.youLose):g.won&&(id==='pipes'||id==='codebreaker')?t.solved:t.finish;
+ const detail=id==='matching-pairs'||id==='pipes'||classicIds.includes(id)?`${t.moves}: ${g.moves}`:id==='codebreaker'?`${t.guess}: ${g.history.length} / 8`:`${t.correct}: ${g.correct} / ${id==='mental-math'?10:5}`;
+ area.innerHTML=`${mood.celebrate?confetti():''}<div class="result"><h2 tabindex="-1">${heading}</h2><div class="result-overview"><figure class="result-snapshot" aria-label="${t.finishedView}"><div class="snapshot-art" inert aria-hidden="true">${finalBoard(g,t)}</div><figcaption>${t.finishedView}</figcaption></figure><div class="score-summary"><span class="result-label">${t.roundScore}</span><div class="result-score">${g.score.toLocaleString(lang)}</div><span class="score-unit">${t.pointsLabel}</span><p class="result-detail">${detail}</p></div></div><p class="result-encouragement" role="status">${mood.message}</p><p class="result-invite">${mood.invite}</p></div><div class="result-actions"><div class="result-secondary">${button(t.share,'share','button secondary')}${button(t.randomGame,'random','button secondary')}</div>${button(t.again,'start','button play-again invite-play')}</div>${!canSave()?`<p class="save-warning">${t.saveUnavailable}</p>`:''}`;
+ if(mood.celebrate)later(()=>area.querySelector('.confetti')?.remove(),2200);
+}
 function shareUrl(){const url=new URL(`/${lang}/${id}/`,location.origin);if(daily)url.searchParams.set('daily',g?.day||day);return url.href;}
 async function share(){
  const url=shareUrl(),data={title:`${t.names[index]} · Biuno`,url};

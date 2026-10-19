@@ -7,6 +7,17 @@
     "theme_axes": "light / system-sans / cool",
     "nav": "N9",
     "footer": "Ft2",
+    "enrichment": "user-requested local confetti, button wobble and wordmark animation",
+    "brief": "Centred start instructions, record top right, compact final board beside score, factual rotating encouragement, no competitor references or external links."
+  },
+  {
+    "date": "2026-10-19",
+    "scope": "app",
+    "macrostructure": "Workbench",
+    "theme": "custom",
+    "theme_axes": "light / system-sans / cool",
+    "nav": "N9",
+    "footer": "Ft2",
     "enrichment": "native emoji and functional piece animations",
     "brief": "Familiar childhood games; colour sequence pads; left-aligned tiny instructions; history and skill disclosures below boards. User-selected local fonts and emoji."
   },
