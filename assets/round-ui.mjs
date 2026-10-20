@@ -1,6 +1,7 @@
 import {icon,pipe} from './art.mjs';
 import {classicIds} from './classic-engine.mjs';
 import {classicBoard} from './classic-ui.mjs';
+import {mergeBoard,sudokuBoard} from './puzzle.mjs';
 const sym=[1,8,12,11,0,3];
 export function encouragement(g,t,lang='en'){
  const previous=g.previousBest||0,played=g.previousPlayed||0,format=n=>n.toLocaleString(lang);
@@ -15,6 +16,8 @@ export function encouragement(g,t,lang='en'){
 // Result art is a non-interactive view of the actual completed state.
 export function finalBoard(g,t){
  if(classicIds.includes(g.id))return classicBoard(g,t,true);
+ if(g.id==='merge')return mergeBoard(g,t,true);
+ if(g.id==='sudoku')return sudokuBoard(g,t,true);
  if(g.id==='matching-pairs')return `<div class="board mini-pairs" style="--cols:4">${g.cards.map((v,k)=>`<span class="cell ${g.matched.includes(k)?'matched':''}">${icon(v)}</span>`).join('')}</div>`;
  if(g.id==='pipes')return `<div class="board pipe-board" style="--cols:${g.n}">${g.tiles.map((v,k)=>`<span class="cell pipe-tile reached">${pipe(v,k===0)}</span>`).join('')}</div>`;
  if(g.id==='what-changed'){const trial=g.trials[Math.min(g.round,4)];return `<div class="board" style="--cols:${g.level===0?2:3}">${trial.after.map(v=>`<span class="cell ${v===trial.answer?'snapshot-answer':''}">${icon(v)}</span>`).join('')}</div>`;}
@@ -22,4 +25,4 @@ export function finalBoard(g,t){
  if(g.id==='codebreaker')return `<div class="snapshot-code">${g.secret.map(v=>`<span class="cell">${icon(sym[v])}</span>`).join('')}</div>`;
  const q=g.questions[Math.min(g.round,9)];return `<div class="snapshot-math">${q.a} ${q.op} ${q.b}<br>= ${q.answer}</div>`;
 }
-export function confetti(){return `<div class="confetti" aria-hidden="true">${Array.from({length:30},(_,k)=>`<i class="confetti-${k%4}" style="--x:${(k*37)%100}%;--delay:${k%6*55}ms;--drift:${(k%7-3)*22}px;--spin:${(k%2?1:-1)*(180+k*17)}deg"></i>`).join('')}</div>`;}
+export function confetti(){return `<div class="confetti" aria-hidden="true">${Array.from({length:110},(_,k)=>`<i class="confetti-${k%6}" style="--x:${(k*37)%100}%;--delay:${k%11*160}ms;--dur:${3200+(k*83)%2600}ms;--drift:${(k%9-4)*38}px;--spin:${(k%2?1:-1)*(360+k*29)}deg;--w:${7+k%5*3}px;--h:${10+k%4*4}px"></i>`).join('')}</div>`;}
