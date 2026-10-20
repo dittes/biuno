@@ -1,6 +1,6 @@
 import {content} from './content.mjs';
 export const languages = { en: 'English', de: 'Deutsch', cs: 'Čeština', pl: 'Polski' };
-export const ids = ['matching-pairs','what-changed','sequence-memory','codebreaker','pipes','mental-math','minesweeper','sea-battle','tic-tac-toe','connect-four','reversi','merge','sudoku'];
+export const ids = ['matching-pairs','what-changed','sequence-memory','codebreaker','pipes','mental-math','minesweeper','sea-battle','tic-tac-toe','connect-four','reversi','merge','sudoku','lights-out','slide-puzzle','colour-flood','pattern-recall','checkers','dots-boxes','nonogram','word-guess','n-back','crazy-eights','peg-solitaire'];
 export const i18n = {
  en: {
   tagline:'A little time to play.', headline:'Give your day a little play.', intro:'Small games for curious minds. A few quiet minutes, a fresh puzzle, and the pleasure of figuring it out.',
@@ -75,8 +75,8 @@ export const i18n = {
   privacyTitle:'Twoja gra zostaje u Ciebie.', privacyBody:'Biuno nie wymaga konta. Kod gry używa localStorage w przeglądarce do zapisywania wyników, ustawień, dziennych rezultatów i niedokończonych rund. Te dane nie są wysyłane na serwer gry Biuno. Biuno nie dodaje reklam, skryptów analitycznych, zewnętrznych czcionek ani śledzących plików cookie.', privacyCache:'Service worker zapisuje pliki strony i gier na tym urządzeniu, umożliwiając grę offline po udanej pierwszej wizycie. Ustawienia przeglądarki mogą blokować zapis lub usuwać dane. Tryb prywatny może usunąć je po zamknięciu sesji.', privacyHost:'Dostawca hostingu może przetwarzać dane połączenia, takie jak adres IP i czas żądania, w celu udostępniania i zabezpieczania strony. Prywatny podgląd może dodatkowo wymagać logowania u dostawcy hostingu. Lokalne postępy nie synchronizują się między urządzeniami.', privacyContact:'Pytania dotyczące strony lub danych osobowych kieruj do operatora wymienionego w danych wydawcy.', legalTitle:'Dane wydawcy', legalIntro:'Informacje o usługodawcy zgodnie z § 5 niemieckiej ustawy DDG', operator:'Operator tej strony', contact:'Kontakt', country:'Niemcy', noResults:'Brak gier w tej kategorii.', symbols:['Liść','Słońce','Kubek','Klucz','Książka','Dom','Drzewo','Ryba','Gwiazda','Parasol','Kwiat','Księżyc','Romb','Dzwonek','Łódź','Serce']
  }
 };
-export const categories = ['memory','memory','memory','logic','logic','numbers','logic','logic','logic','logic','logic','numbers','numbers'];
-export const durations = ['1–3','2–3','1–2','3–5','2–4','1–2','2–5','3–5','1–2','2–4','3–6','3–8','3–10'];
+export const categories = ['memory','memory','memory','logic','logic','numbers','logic','logic','logic','logic','logic','numbers','numbers','logic','numbers','logic','memory','logic','logic','logic','logic','memory','logic','logic'];
+export const durations = ['1–3','2–3','1–2','3–5','2–4','1–2','2–5','3–5','1–2','2–4','3–6','3–8','3–10','2–5','3–8','2–4','1–3','4–10','3–6','3–10','2–5','2–4','3–6','3–10'];
 const redesignCopy={
  en:{otherGame:'Choose a game',randomGame:'Play another game',share:'Share with friends',copied:'Link copied. Share it with a friend.',copyLink:'Copy link',shareHelp:'Copy this link to share the game.',homeIntro:'Pick a game and get straight to it.',newBest:'New personal best',highScore:'Personal best',roundScore:'Your score',another:'Another game',recordLabel:'Best'},
  de:{otherGame:'Spiel wählen',randomGame:'Anderes Spiel',share:'Mit Freunden teilen',copied:'Link kopiert. Teile ihn mit Freunden.',copyLink:'Link kopieren',shareHelp:'Kopiere diesen Link, um das Spiel zu teilen.',homeIntro:'Wähle ein Spiel und leg direkt los.',newBest:'Neuer persönlicher Rekord',highScore:'Persönlicher Rekord',roundScore:'Deine Punkte',another:'Anderes Spiel',recordLabel:'Rekord'},
@@ -136,6 +136,8 @@ import {extra} from './extra.mjs';
 for(const lang of Object.keys(i18n))Object.assign(i18n[lang],extra[lang]);
 
 import {games2} from './games2.mjs';
-for(const lang of Object.keys(i18n)){const t=i18n[lang],c=games2[lang];
+import {games3} from './games3.mjs';
+import {games4} from './games4.mjs';
+for(const lang of Object.keys(i18n))for(const c of [games2[lang],games3[lang],games4[lang]]){const t=i18n[lang];
  for(const k of ['names','desc','rules','steps','aboutText','whyText','intro','tips'])t[k].push(...c[k]);
- for(const k of Object.keys(c))if(!Array.isArray(c[k]))t[k]=c[k];}
+ for(const k of Object.keys(c))if(!['names','desc','rules','steps','aboutText','whyText','intro','tips'].includes(k))t[k]=c[k];}

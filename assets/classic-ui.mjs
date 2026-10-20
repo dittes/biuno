@@ -1,8 +1,12 @@
 import {mineNumber,sunkShips,revMoves,revCount} from './classic-engine.mjs';
+import {ckBoard,ckStats,dbBoard,dbStats,ceBoard,ceStats} from './duels2.mjs';
 const X='<svg viewBox="0 0 100 100" aria-hidden="true"><path pathLength="1" d="M18 18 82 82"/><path pathLength="1" d="M82 18 18 82"/></svg>';
 const O='<svg viewBox="0 0 100 100" aria-hidden="true"><circle pathLength="1" cx="50" cy="50" r="33"/></svg>';
 export function classicBoard(g,t,preview=false){
  const done=Boolean(g.outcome)||preview,coord=k=>`${t.row} ${Math.floor(k/(g.n||3))+1}, ${t.column} ${k%(g.n||3)+1}`;
+ if(g.id==='checkers')return ckBoard(g,t,preview);
+ if(g.id==='dots-boxes')return dbBoard(g,t,preview);
+ if(g.id==='crazy-eights')return ceBoard(g,t,preview);
  if(g.id==='minesweeper'){
   const origin=g.justOpened[0]??0,ox=origin%6,oy=Math.floor(origin/6);
   return `<div class="mine-tools" role="group" aria-label="${t.select}">${['reveal','flag'].map(tool=>`<button type="button" data-action="mine-tool" data-tool="${tool}" aria-pressed="${g.tool===tool}" ${done?'disabled':''}>${tool==='flag'?'🚩 ':''}${t[tool]}</button>`).join('')}</div><div class="classic-grid mine-grid">${Array.from({length:36},(_,k)=>{
@@ -28,4 +32,4 @@ export function classicBoard(g,t,preview=false){
  };
  return `<p class="game-message" role="status">${g.outcome?'':g.turn==='X'?t.yourTurn:t.computerTurn}${g.lastShot?` · ${g.lastShot.sunk?t.sunk:g.lastShot.hit?t.hit:t.miss}`:''}</p><div class="sea-boards">${sea(false)}${sea(true)}</div><p class="board-note">${t.navalNote}</p>`;
 }
-export function classicStats(g,t){if(g.id==='connect-four')return `<span>${t.moves}: <strong>${Math.ceil(g.moves/2)}</strong></span><span>${t.you}: <i class="chip-disc d-x"></i> ${t.computer}: <i class="chip-disc d-o"></i></span>`;if(g.id==='reversi'){const[x,o]=revCount(g.board);return `<span>${t.you}: <strong>${x}</strong></span><span>${t.computer}: <strong>${o}</strong></span>`;}if(g.id==='minesweeper')return `<span>🚩 ${g.flags.length} / ${g.mineCount}</span><span>${t.safe}: <strong>${g.opened.filter(k=>!g.mines.includes(k)).length} / ${36-g.mineCount}</strong></span>`;if(g.id==='sea-battle')return `<span>${t.shots}: <strong>${g.shots.length}</strong></span><span>${t.sunk}: <strong>${sunkShips(g.enemyFleet,g.shots)} / 3</strong></span>`;return `<span>${t.you}: <strong>X</strong></span><span>${t.computer}: <strong>O</strong></span>`;}
+export function classicStats(g,t){if(g.id==='checkers')return ckStats(g,t);if(g.id==='dots-boxes')return dbStats(g,t);if(g.id==='crazy-eights')return ceStats(g,t);if(g.id==='connect-four')return `<span>${t.moves}: <strong>${Math.ceil(g.moves/2)}</strong></span><span>${t.you}: <i class="chip-disc d-x"></i> ${t.computer}: <i class="chip-disc d-o"></i></span>`;if(g.id==='reversi'){const[x,o]=revCount(g.board);return `<span>${t.you}: <strong>${x}</strong></span><span>${t.computer}: <strong>${o}</strong></span>`;}if(g.id==='minesweeper')return `<span>🚩 ${g.flags.length} / ${g.mineCount}</span><span>${t.safe}: <strong>${g.opened.filter(k=>!g.mines.includes(k)).length} / ${36-g.mineCount}</strong></span>`;if(g.id==='sea-battle')return `<span>${t.shots}: <strong>${g.shots.length}</strong></span><span>${t.sunk}: <strong>${sunkShips(g.enemyFleet,g.shots)} / 3</strong></span>`;return `<span>${t.you}: <strong>X</strong></span><span>${t.computer}: <strong>O</strong></span>`;}

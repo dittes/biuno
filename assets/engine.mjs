@@ -1,5 +1,6 @@
 import {classicIds,classicNew,classicScore} from './classic-engine.mjs';
-import {mergeNew,mergeScore,sudokuNew,sudokuScore} from './puzzle.mjs';
+import {mergeNew,mergeScore,sudokuNew,sudokuScore,lightsNew,lightsScore,slideNew,slideScore,floodNew,floodScore,patternRounds,nonoNew,nonoScore,pegNew,pegScore,nbackNew,nbackScore} from './puzzle.mjs';
+import {wordNew,wordScore} from './words.mjs';
 export function rng(seed) {
  let n = hash(String(seed));
  return () => { n |= 0; n = n + 0x6D2B79F5 | 0; let t = Math.imul(n ^ n >>> 15, 1 | n); t ^= t + Math.imul(t ^ t >>> 7, 61 | t); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
@@ -8,9 +9,9 @@ export function hash(s) { let h=2166136261; for (const c of s) h=Math.imul(h^c.c
 export function shuffle(items, random=Math.random) { const a=[...items]; for(let i=a.length-1;i>0;i--) { const j=Math.floor(random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 export function dailyKey(date=new Date()) { return `${date.getUTCFullYear()}-${String(date.getUTCMonth()+1).padStart(2,'0')}-${String(date.getUTCDate()).padStart(2,'0')}`; }
 // Four a day: one memory game, one logic puzzle, one numbers game, one classic duel.
-export function dailyGames(day=dailyKey()) { return [shuffle([0,1,2],rng(day))[0],shuffle([3,4],rng(day+'logic'))[0],shuffle([5,11,12],rng(day+'numbers'))[0],shuffle([6,7,8,9,10],rng(day+'classic'))[0]]; }
+export function dailyGames(day=dailyKey()) { return [shuffle([0,1,2,16,21],rng(day))[0],shuffle([3,4,13,15,19,20,23],rng(day+'logic'))[0],shuffle([5,11,12,14],rng(day+'numbers'))[0],shuffle([6,7,8,9,10,17,18,22],rng(day+'classic'))[0]]; }
 // Best realistic score per game, so results can be compared as a percentage.
-export const maxScores={'matching-pairs':1000,'what-changed':1000,'sequence-memory':1000,'codebreaker':1000,'pipes':1200,'mental-math':1000,'minesweeper':1300,'sea-battle':1400,'tic-tac-toe':1350,'connect-four':1340,'reversi':1500,'merge':1300,'sudoku':1200};
+export const maxScores={'matching-pairs':1000,'what-changed':1000,'sequence-memory':1000,'codebreaker':1000,'pipes':1200,'mental-math':1000,'minesweeper':1300,'sea-battle':1400,'tic-tac-toe':1350,'connect-four':1340,'reversi':1500,'merge':1300,'sudoku':1200,'lights-out':1200,'slide-puzzle':1100,'colour-flood':1300,'pattern-recall':1000,'checkers':1400,'dots-boxes':1400,'nonogram':1200,'word-guess':1100,'n-back':1000,'crazy-eights':1400,'peg-solitaire':1200};
 export const scorePercent=(id,score)=>Math.max(0,Math.min(100,Math.round(score/(maxScores[id]||1000)*100)));
 export function codeFeedback(secret, guess) {
  let exact=0; const a=[],b=[];
@@ -61,12 +62,27 @@ export function newGame(id,level=1,seed=String(Date.now())) {
  if(id==='mental-math')return {...base,questions:Array.from({length:10},()=>makeMath(level,random)),feedback:null};
  if(id==='merge')return {...base,...mergeNew(level,random,seed),moves:0};
  if(id==='sudoku')return {...base,...sudokuNew(level,random)};
+ if(id==='lights-out')return {...base,...lightsNew(level,random)};
+ if(id==='slide-puzzle')return {...base,...slideNew(level,random)};
+ if(id==='colour-flood')return {...base,...floodNew(level,random)};
+ if(id==='nonogram')return {...base,...nonoNew(level,random)};
+ if(id==='peg-solitaire')return {...base,...pegNew(level,random)};
+ if(id==='n-back')return {...base,...nbackNew(level,random)};
+ if(id==='word-guess')return {...base,...wordNew(level,random)};
+ if(id==='pattern-recall')return {...base,rounds:patternRounds(level,random),phase:'show',input:[],feedback:null};
  throw new Error('Unknown game');
 }
 export function finishScore(g){
  if(classicIds.includes(g.id))return classicScore(g);
  if(g.id==='merge')return mergeScore(g);
  if(g.id==='sudoku')return sudokuScore(g);
+ if(g.id==='nonogram')return nonoScore(g);
+ if(g.id==='peg-solitaire')return pegScore(g);
+ if(g.id==='n-back')return nbackScore(g);
+ if(g.id==='word-guess')return wordScore(g);
+ if(g.id==='lights-out')return lightsScore(g);
+ if(g.id==='slide-puzzle')return slideScore(g);
+ if(g.id==='colour-flood')return floodScore(g);
  if(g.id==='matching-pairs')return Math.max(100,1000-(g.moves-g.cards.length/2)*25);
  if(g.id==='codebreaker')return g.won?Math.max(100,1100-g.history.length*100):0;
  if(g.id==='pipes')return Math.max(100,1200-g.moves*10-g.hints*150);
