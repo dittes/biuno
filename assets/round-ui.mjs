@@ -4,6 +4,7 @@ import {classicBoard} from './classic-ui.mjs';
 import {mergeBoard,sudokuBoard,lightsBoard,slideBoard,floodBoard,patternBoard,nonoBoard,pegBoard} from './puzzle.mjs';
 import {wordBoard} from './words.mjs';
 import {waterBoard,hanoiBoard,takuzuBoard} from './set5.mjs';
+import {skBoard,kkBoard,gfBoard,hashiBoard} from './set6.mjs';
 const sym=[1,8,12,11,0,3];
 export function encouragement(g,t,lang='en'){
  const previous=g.previousBest||0,played=g.previousPlayed||0,format=n=>n.toLocaleString(lang);
@@ -25,6 +26,10 @@ export function finalBoard(g,t){
  if(g.id==='water-sort')return waterBoard(g,t,true);
  if(g.id==='hanoi')return hanoiBoard(g,t,true);
  if(g.id==='takuzu')return takuzuBoard(g,t,true);
+ if(g.id==='sokoban')return skBoard(g,t,true);
+ if(g.id==='kenken')return kkBoard(g,t,true);
+ if(g.id==='golf-solitaire')return gfBoard(g,t,true);
+ if(g.id==='hashi')return hashiBoard(g,t,true);
  if(g.id==='n-back')return `<div class="snapshot-math">🧠<br>${g.correct} / ${g.seq.length-g.n}</div>`;
  if(g.id==='word-guess')return wordBoard(g,t,typeof document!=='undefined'&&document.documentElement.lang||'en',true);
  if(g.id==='lights-out')return lightsBoard(g,t,true);
