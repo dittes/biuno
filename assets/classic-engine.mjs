@@ -1,5 +1,6 @@
 import {ckNew,ckScore,dbNew,dbScore,ceNew,ceScore} from './duels2.mjs';
-export const classicIds=['minesweeper','sea-battle','tic-tac-toe','connect-four','reversi','checkers','dots-boxes','crazy-eights'];
+import {mcNew,mcScore} from './set5.mjs';
+export const classicIds=['minesweeper','sea-battle','tic-tac-toe','connect-four','reversi','checkers','dots-boxes','crazy-eights','mancala'];
 export function neighbours(i,n){const a=[];for(let r=-1;r<=1;r++)for(let c=-1;c<=1;c++){const y=Math.floor(i/n)+r,x=i%n+c;if((r||c)&&y>=0&&y<n&&x>=0&&x<n)a.push(y*n+x);}return a;}
 const mix=(a,random)=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 export function classicNew(id,level,random){
@@ -7,6 +8,7 @@ export function classicNew(id,level,random){
  if(id==='tic-tac-toe')return {board:Array(9).fill(null),turn:'X',outcome:null,line:[],moves:0,lastMove:-1};
  if(id==='sea-battle')return {n:6,playerFleet:makeFleet(6,random),enemyFleet:makeFleet(6,random),shots:[],enemyShots:[],aiTargets:[],turn:'X',outcome:null,moves:0,lastShot:null};
  if(id==='checkers')return ckNew();
+ if(id==='mancala')return mcNew();
  if(id==='dots-boxes')return dbNew(level);
  if(id==='crazy-eights')return ceNew(level,random);
  if(id==='connect-four')return {cols:7,rows:6,board:Array(42).fill(null),turn:'X',outcome:null,line:[],moves:0,lastMove:-1};
@@ -60,6 +62,7 @@ export function classicScore(g){
  if(g.id==='checkers')return ckScore(g);
  if(g.id==='dots-boxes')return dbScore(g);
  if(g.id==='crazy-eights')return ceScore(g);
+ if(g.id==='mancala')return mcScore(g);
  if(g.outcome==='draw')return 500;if(g.outcome!=='win')return 0;
  if(g.id==='connect-four')return Math.max(200,1500-Math.ceil(g.moves/2)*40);
  if(g.id==='reversi'){const[x,o]=revCount(g.board);return Math.min(1500,1000+(x-o)*14);}

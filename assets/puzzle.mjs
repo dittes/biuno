@@ -1,5 +1,5 @@
 // Single-player number puzzles: tile merging and Sudoku. Pure functions + markup.
-export const puzzleIds=['merge','sudoku','lights-out','slide-puzzle','colour-flood','nonogram','peg-solitaire','n-back','word-guess'];
+export const puzzleIds=['merge','sudoku','lights-out','slide-puzzle','colour-flood','nonogram','peg-solitaire','n-back','word-guess','water-sort','hanoi','takuzu'];
 const mix=(a,random)=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 
 // ───────── Tile merge (4×4) ─────────
